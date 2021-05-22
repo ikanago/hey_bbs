@@ -1,5 +1,3 @@
-import pytest
-
 from libbbs.parse_request import parse_request
 from libbbs.request import Request
 

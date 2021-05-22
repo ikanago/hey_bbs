@@ -3,16 +3,29 @@ from enum import Enum, auto
 
 
 class Method(Enum):
-    GET = auto()
+    GET = b"GET"
 
     def __str__(self) -> str:
-        if self == Method.GET:
-            return "GET"
+        self.value
 
     @staticmethod
     def from_bytes(method: bytes) -> Method:
         if method == b"GET":
             return Method.GET
+
+
+class StatusCode(Enum):
+    OK = 200
+    BAD_REQUEST = 400
+    NOT_FOUND = 404
+
+    def to_bytes(self) -> bytes:
+        if self == StatusCode.OK:
+            return b"OK"
+        elif self == StatusCode.BAD_REQUEST:
+            return b"Bad Request"
+        elif self == StatusCode.NOT_FOUND:
+            return b"Not Found"
 
 
 class HttpError(Exception):

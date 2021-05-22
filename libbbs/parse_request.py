@@ -19,6 +19,13 @@ def parse_request(request_message: bytes) -> Request:
             break
         key, value = _parse_header(header)
         req[key] = value
+    # Parse request body
+    # if req.content_length() > 0:
+    #     while True:
+    #         message = client_sock.recv(Server.BUFSIZE)
+    #         buffer += message
+    #         if len(buffer) == req.content_length():
+    #             break
     return req
 
 
@@ -26,7 +33,7 @@ def _parse_request_line(request_line: bytes) -> tuple[Method, str, str]:
     method, uri, version = request_line.split(b" ")
     if version != b"HTTP/1.0" and version != b"HTTP/1.1":
         raise BadRequest
-    return Method.from_bytes(method), unquote(uri.decode()), version.decode()
+    return Method.from_bytes(method), unquote(uri.decode()), version
 
 
 def _parse_header(header_line: bytes) -> tuple[str, str]:
