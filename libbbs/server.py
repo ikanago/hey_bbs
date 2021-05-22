@@ -34,15 +34,16 @@ class Server:
         parser = RequestParser()
         while True:
             message = client_sock.recv(Server.BUFSIZE)
-            req = parser.try_parse()
-            if req is not None:
+            is_parse_complete = parser.try_parse(message)
+            if is_parse_complete:
                 break
 
         try:
+            req = parser.complete()
             res = router.dispatch(req.uri, req.method)(req)
             print(req)
         except BadRequest:
             res = Response.from_status_code(StatusCode.BAD_REQUEST)
 
-        # res.send(client_sock)
+        res.send(client_sock)
         client_sock.close()
