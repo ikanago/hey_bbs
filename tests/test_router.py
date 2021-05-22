@@ -5,7 +5,7 @@ from libbbs.router import Router
 
 
 def ok(_: Request) -> Response:
-    return Response.from_status_code(StatusCode.OK)
+    return Response(status_code=StatusCode.OK)
 
 
 def test_router():
@@ -15,6 +15,11 @@ def test_router():
         router.route(*route, ok)
 
     for route in routes:
-        req = Request()
-        res = router.dispatch(*route)(req)
+        res = router.dispatch(*route)(Request())
         assert res.is_success()
+
+
+def test_absent_route():
+    router = Router()
+    res = router.dispatch("/", Method.GET)(Request())
+    assert res.is_failure()

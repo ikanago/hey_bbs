@@ -27,4 +27,4 @@ class Router:
 
 
 def not_found_handler(_: Request) -> Response:
-    return Response.from_status_code(StatusCode.NOT_FOUND)
+    return Response(status_code=StatusCode.NOT_FOUND)
