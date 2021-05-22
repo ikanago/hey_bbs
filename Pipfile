@@ -13,5 +13,6 @@ autopep8 = "*"
 python_version = "3.8"
 
 [scripts]
+main = "python main.py"
 test = "python -m pytest"
 format = "autopep8 -ivr ."
