@@ -1,3 +1,5 @@
+from libbbs.misc import StatusCode
+from libbbs.response import Response
 from libbbs.parse_request import parse_request
 import socket
 import threading
@@ -14,6 +16,7 @@ class Server:
     def run(self) -> None:
         self.sock.bind(("0.0.0.0", self.port))
         self.sock.listen(128)
+        print("Listening to on port {}".format(self.port))
 
         while True:
             client_sock, _ = self.sock.accept()
@@ -27,7 +30,6 @@ class Server:
         # Parse request line and header
         while True:
             message = client_sock.recv(Server.BUFSIZE)
-            print(message)
             buffer += message
             end_of_header = buffer.find(b"\r\n\r\n")
             if end_of_header >= 0:
@@ -37,7 +39,7 @@ class Server:
                 break
 
         req = parse_request(request_message)
-        print(req.method, req.uri)
+        print(req)
         # Parse request body
         # if req.content_length() > 0:
         #     while True:
@@ -46,5 +48,6 @@ class Server:
         #         if len(buffer) == req.content_length():
         #             break
 
-        client_sock.send(b"HTTP/1.1 200 OK\r\n\r\n")
+        res = Response.from_status_code(StatusCode.OK)
+        res.send(client_sock)
         client_sock.close()

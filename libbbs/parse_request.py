@@ -26,7 +26,7 @@ def _parse_request_line(request_line: bytes) -> tuple[Method, str, str]:
     method, uri, version = request_line.split(b" ")
     if version != b"HTTP/1.0" and version != b"HTTP/1.1":
         raise BadRequest
-    return Method.from_bytes(method), unquote(uri.decode()), version.decode()
+    return Method.from_bytes(method), unquote(uri.decode()), version
 
 
 def _parse_header(header_line: bytes) -> tuple[str, str]:
