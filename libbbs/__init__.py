@@ -1,5 +1,5 @@
-from .server import *
-from .request import *
+from .server import Server
+from .request import Request
 
 
 def hello():

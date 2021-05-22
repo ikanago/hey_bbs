@@ -1,26 +1,30 @@
 from __future__ import annotations
 from libbbs.misc import Method
+import dataclasses
 
 
+@dataclasses.dataclass
 class Request:
-    def __init__(self, m: Method = None, uri: str = None, version: str = None) -> None:
-        self.__method = m if m is not None else Method.GET
-        self.__uri = uri if uri is not None else ""
-        self.__version = version if version is not None else "HTTP/1.1"
+    method: Method = Method.GET
+    uri: str = "/"
+    version: str = "HTTP/1.1"
+    headers: dict[str, str] = dataclasses.field(init=False)
 
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Request):
-            raise NotImplemented
-        return self.__method == other.__method and self.__uri == other.__uri
+    def __post_init__(self):
+        self.headers = {}
 
-    @property
-    def method(self) -> Method:
-        return self.__method
+    def __getitem__(self, key: str) -> str:
+        if not isinstance(key, str):
+            raise KeyError
+        return self.headers[key.lower()]
 
-    @property
-    def uri(self) -> str:
-        return self.__uri
+    def __setitem__(self, key: str, value: str):
+        if not isinstance(key, str):
+            raise KeyError
+        self.headers[key.lower()] = value
 
-    @property
-    def version(self) -> str:
-        return self.__version
+    def __len__(self):
+        return len(self.headers)
+
+    # def __iter__(self):
+    #     return [key for key, _ in self.headers]

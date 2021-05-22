@@ -11,7 +11,7 @@ class Method(Enum):
 
     @staticmethod
     def from_bytes(method: bytes) -> Method:
-        if method == "GET":
+        if method == b"GET":
             return Method.GET
 
 
