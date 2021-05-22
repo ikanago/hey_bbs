@@ -1,5 +1,4 @@
 from __future__ import annotations
-from libbbs.misc import StatusCode
 import dataclasses
 
 

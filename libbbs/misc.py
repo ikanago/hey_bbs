@@ -1,9 +1,10 @@
 from __future__ import annotations
-from enum import Enum, auto
+from enum import Enum
 
 
 class Method(Enum):
     GET = b"GET"
+    POST = b"POST"
 
     def __str__(self) -> str:
         self.value
@@ -12,6 +13,10 @@ class Method(Enum):
     def from_bytes(method: bytes) -> Method:
         if method == b"GET":
             return Method.GET
+        elif method == b"POST":
+            return Method.POST
+        else:
+            raise BadRequest
 
 
 class StatusCode(Enum):
@@ -26,6 +31,12 @@ class StatusCode(Enum):
             return b"Bad Request"
         elif self == StatusCode.NOT_FOUND:
             return b"Not Found"
+
+    def is_success(self) -> bool:
+        return 200 <= self.value < 400
+
+    def is_failure(self) -> bool:
+        return 400 <= self.value < 600
 
 
 class HttpError(Exception):

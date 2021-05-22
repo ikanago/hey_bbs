@@ -1,4 +1,5 @@
-from libbbs.misc import BadRequest, StatusCode
+from libbbs.router import Handler, Router
+from libbbs.misc import BadRequest, Method, StatusCode
 from libbbs.response import Response
 from libbbs.parse_request import parse_request
 import socket
@@ -12,6 +13,10 @@ class Server:
         self.port = port
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
+        self.router = Router()
+
+    def route(self, uri: str, method: Method, handler: Handler):
+        self.router.route(uri, method, handler)
 
     def run(self) -> None:
         self.sock.bind(("0.0.0.0", self.port))
@@ -21,11 +26,11 @@ class Server:
         while True:
             client_sock, _ = self.sock.accept()
             thread = threading.Thread(
-                target=Server.handle_sock, args=(client_sock,))
+                target=Server.handle_sock, args=(client_sock,  self.router))
             thread.daemon = True
             thread.start()
 
-    def handle_sock(client_sock: socket.socket) -> None:
+    def handle_sock(client_sock: socket.socket, router: Router) -> None:
         buffer = b""
         # Parse request line and header
         while True:
@@ -40,7 +45,7 @@ class Server:
 
         try:
             req = parse_request(request_message)
-            res = Response.from_status_code(StatusCode.OK)
+            res = router.dispatch(req.uri, req.method)(req)
             print(req)
         except BadRequest:
             res = Response.from_status_code(StatusCode.BAD_REQUEST)

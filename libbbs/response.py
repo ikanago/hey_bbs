@@ -28,6 +28,8 @@ class Response:
         socket.send(b"%b %d %b\r\n" % (
             self.version, self.status_code.value, self.status_code.to_bytes()))
 
-    @staticmethod
-    def from_status_code(status_code: StatusCode) -> Response:
-        return Response(status_code=status_code)
+    def is_success(self) -> bool:
+        return self.status_code.is_success()
+
+    def is_failure(self) -> bool:
+        return self.status_code.is_failure()
