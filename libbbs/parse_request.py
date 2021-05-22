@@ -19,6 +19,13 @@ def parse_request(request_message: bytes) -> Request:
             break
         key, value = _parse_header(header)
         req[key] = value
+    # Parse request body
+    # if req.content_length() > 0:
+    #     while True:
+    #         message = client_sock.recv(Server.BUFSIZE)
+    #         buffer += message
+    #         if len(buffer) == req.content_length():
+    #             break
     return req
 
 

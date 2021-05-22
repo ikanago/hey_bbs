@@ -1,4 +1,4 @@
-from libbbs.misc import StatusCode
+from libbbs.misc import BadRequest, StatusCode
 from libbbs.response import Response
 from libbbs.parse_request import parse_request
 import socket
@@ -38,16 +38,12 @@ class Server:
                 buffer = buffer[(end_of_header + 4):]
                 break
 
-        req = parse_request(request_message)
-        print(req)
-        # Parse request body
-        # if req.content_length() > 0:
-        #     while True:
-        #         message = client_sock.recv(Server.BUFSIZE)
-        #         buffer += message
-        #         if len(buffer) == req.content_length():
-        #             break
+        try:
+            req = parse_request(request_message)
+            res = Response.from_status_code(StatusCode.OK)
+            print(req)
+        except BadRequest:
+            res = Response.from_status_code(StatusCode.BAD_REQUEST)
 
-        res = Response.from_status_code(StatusCode.OK)
         res.send(client_sock)
         client_sock.close()
