@@ -1,5 +1,5 @@
 from libbbs.router import Handler, Router
-from libbbs.misc import BadRequest, Method, StatusCode
+from libbbs.misc import BadRequest, InternalServerError, Method, StatusCode
 from libbbs.response import Response
 from libbbs.parse_request import RequestParser
 import socket
@@ -45,6 +45,8 @@ class Server:
             print(req)
         except BadRequest:
             res = Response(status_code=StatusCode.BAD_REQUEST)
+        except InternalServerError:
+            res = Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
 
         res.send(client_sock)
         client_sock.close()

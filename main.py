@@ -1,7 +1,16 @@
+from dataclasses import dataclass
+from dataclasses_json import DataClassJsonMixin
+from libbbs.body import Body
 from libbbs.response import Response
 from libbbs.request import Request
 from libbbs.misc import Method, StatusCode
 from libbbs.server import Server
+
+
+@dataclass
+class User(DataClassJsonMixin):
+    username: str
+    text: str
 
 
 def hello(_: Request) -> Response:
@@ -11,7 +20,9 @@ def hello(_: Request) -> Response:
 def echo(req: Request) -> Response:
     res = Response()
     if req.body is not None:
-        res.set_body(req.body)
+        user = req.body.from_json(User)
+        print(user)
+        res.set_body(Body.to_json(user))
     return res
 
 
