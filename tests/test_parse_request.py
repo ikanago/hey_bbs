@@ -1,3 +1,4 @@
+from libbbs.body import Body
 from urllib import parse
 from libbbs.parse_request import RequestParser
 from libbbs.request import Request
@@ -59,7 +60,7 @@ def test_body_separated_input():
 def test_body_separated_input():
     expected = Request(uri="/index.html")
     expected["content-length"] = "13"
-    expected.body = b"Hello, World!"
+    expected.body = Body(b"Hello, World!")
     parser = RequestParser()
     parser.try_parse(b"GET /index.html HT")
     parser.try_parse(b"TP/1.1\r\nContent-Le")

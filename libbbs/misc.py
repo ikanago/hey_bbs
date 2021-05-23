@@ -39,6 +39,11 @@ class StatusCode(Enum):
         return 400 <= self.value < 600
 
 
+class Mime:
+    TEXT_PLAIN = "text/plain"
+    APPLICATION_JSON = "application/json"
+
+
 class HttpError(Exception):
     pass
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Optional
+from libbbs.body import Body
 from libbbs.header_map import HeaderMap
 from libbbs.misc import Method
 import dataclasses
@@ -11,7 +12,7 @@ class Request:
     uri: str = "/"
     version: bytes = b"HTTP/1.1"
     headers: HeaderMap = dataclasses.field(init=False)
-    body: str = ""
+    body: Optional[Body] = dataclasses.field(default=None)
 
     def __post_init__(self):
         self.headers = HeaderMap()

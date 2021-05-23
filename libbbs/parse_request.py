@@ -1,4 +1,5 @@
 from __future__ import annotations
+from libbbs.body import Body
 from libbbs.misc import BadRequest, Method
 from libbbs.request import Request
 from urllib.parse import unquote
@@ -82,7 +83,7 @@ class RequestParser:
         if len(self.__buffer) < content_length:
             # Not enough to parse request body
             return False
-        self.__request.body = self.__buffer[:content_length]
+        self.__request.body = Body(self.__buffer[:content_length])
         return True
 
     def _parse_request(self, request_message: bytes) -> Request:
