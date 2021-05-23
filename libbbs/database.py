@@ -6,6 +6,7 @@ from enum import Enum, auto
 
 class Comparison(Enum):
     EQ = auto()
+    NE = auto()
     LT = auto()
     GT = auto()
     LE = auto()
@@ -19,6 +20,9 @@ class Comparable(Protocol):
     @abstractmethod
     def __eq__(self, other: Any) -> bool:
         pass
+
+    def __ne__(self, other: C) -> bool:
+        return not self == other
 
     @abstractmethod
     def __lt__(self: C, other: C) -> bool:
@@ -47,28 +51,30 @@ T = TypeVar("T", bound=Comparable)
 
 @dataclass
 class Db(Generic[T]):
-    inner: List[QueryableBy[T]]
+    __inner: List[QueryableBy[T]]
 
     def query(self, target: T, comp: Comparison = Comparison.EQ) -> List[QueryableBy[T]]:
         if comp == Comparison.EQ:
-            return [x for x in self.inner if x.get() == target]
+            return [x for x in self.__inner if x.get() == target]
+        elif comp == Comparison.NE:
+            return [x for x in self.__inner if x.get() != target]
         elif comp == Comparison.LT:
-            return [x for x in self.inner if x.get() < target]
+            return [x for x in self.__inner if x.get() < target]
         elif comp == Comparison.GT:
-            return [x for x in self.inner if x.get() > target]
+            return [x for x in self.__inner if x.get() > target]
         elif comp == Comparison.LE:
-            return [x for x in self.inner if x.get() <= target]
+            return [x for x in self.__inner if x.get() <= target]
         elif comp == Comparison.GE:
-            return [x for x in self.inner if x.get() >= target]
+            return [x for x in self.__inner if x.get() >= target]
         else:
             return []
 
     def delete(self, target: T):
-        for data in self.inner:
-            if data.get() == target:
-                found = data
-                break
-        self.inner.remove(found)
+        inner = []
+        for data in self.__inner:
+            if data.get() != target:
+                inner.append(data)
+        self.__inner = inner
 
 
 @dataclass
