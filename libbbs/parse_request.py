@@ -51,7 +51,7 @@ class RequestParser:
                 break
         return True
 
-    def _try_parse_until_headers(self) -> Optional[Request]:
+    def _try_parse_until_headers(self) -> bool:
         """Try to parse request message in the buffer until whole headers complete.
 
         Returns
@@ -70,7 +70,7 @@ class RequestParser:
         self.__request = self._parse_request(request_message)
         return True
 
-    def _try_parse_body(self) -> Optional[Request]:
+    def _try_parse_body(self) -> bool:
         """Try to parse request message in the buffer until whole headers complete.
 
         Returns
@@ -102,7 +102,7 @@ class RequestParser:
         return req
 
 
-def _parse_request_line(request_line: bytes) -> tuple[Method, str, str]:
+def _parse_request_line(request_line: bytes) -> tuple[Method, str, bytes]:
     method, uri, version = request_line.split(b" ")
     if version != b"HTTP/1.0" and version != b"HTTP/1.1":
         raise BadRequest

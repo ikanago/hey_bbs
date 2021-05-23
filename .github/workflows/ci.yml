@@ -28,5 +28,8 @@ jobs:
       - name: Install Dependencies
         run: pipenv sync --dev
 
+      - name: Type Check
+        run: pipenv run type
+
       - name: Unit Test
         run: pipenv run test

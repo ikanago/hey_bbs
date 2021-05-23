@@ -30,6 +30,7 @@ class Server:
             thread.daemon = True
             thread.start()
 
+    @staticmethod
     def handle_sock(client_sock: socket.socket, router: Router) -> None:
         parser = RequestParser()
         while True:
@@ -43,7 +44,7 @@ class Server:
             res = router.dispatch(req.uri, req.method)(req)
             print(req)
         except BadRequest:
-            res = Response.from_status_code(StatusCode.BAD_REQUEST)
+            res = Response(status_code=StatusCode.BAD_REQUEST)
 
         res.send(client_sock)
         client_sock.close()

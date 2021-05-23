@@ -7,7 +7,7 @@ class Method(Enum):
     POST = b"POST"
 
     def __str__(self) -> str:
-        self.value
+        return self.value.decode()
 
     @staticmethod
     def from_bytes(method: bytes) -> Method:
@@ -31,6 +31,9 @@ class StatusCode(Enum):
             return b"Bad Request"
         elif self == StatusCode.NOT_FOUND:
             return b"Not Found"
+        else:
+            # Unreachable, though
+            return b"Unknown"
 
     def is_success(self) -> bool:
         return 200 <= self.value < 400

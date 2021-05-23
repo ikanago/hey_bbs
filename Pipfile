@@ -9,12 +9,14 @@ name = "pypi"
 pytest = "*"
 autopep8 = "*"
 flake8 = "*"
+mypy = "*"
 
 [requires]
 python_version = "3.8"
 
 [scripts]
 main = "python main.py"
+type = "find . -name \"*.py\" -exec mypy {} +"
 test = "python -m pytest -vv"
 format = "autopep8 -ivr ."
 lint = "flake8 --show-source ."

@@ -10,7 +10,8 @@ def hello(_: Request) -> Response:
 
 def echo(req: Request) -> Response:
     res = Response()
-    res.set_body(req.body)
+    if req.body is not None:
+        res.set_body(req.body)
     return res
 
 
