@@ -40,7 +40,8 @@ class RequestParser:
                 if not is_header_complete:
                     return False
                 if self.__request.content_length() is None:
-                    # No need to parse request body, so tell that parsing is finished.
+                    # No need to parse request body,
+                    # so tell that parsing is finished.
                     return True
                 self.__state = "body"
             elif self.__state == "body":

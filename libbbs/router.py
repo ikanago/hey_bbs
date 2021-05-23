@@ -11,7 +11,8 @@ Handler = Callable[[Request], Response]
 
 @dataclasses.dataclass
 class Router:
-    __routing: dict[tuple[str, Method], Handler] = dataclasses.field(init=False)
+    __routing: dict[tuple[str, Method],
+                    Handler] = dataclasses.field(init=False)
 
     def __post_init__(self):
         self.__routing = {}

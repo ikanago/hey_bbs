@@ -1,6 +1,6 @@
 from __future__ import annotations
 from libbbs.body import Body
-from typing import Optional, overload
+from typing import Optional
 from libbbs.header_map import HeaderMap
 from libbbs.misc import StatusCode, Mime
 import dataclasses
@@ -31,7 +31,8 @@ class Response:
         socket.send(b"%b %d %b\r\n" % (
             self.version, self.status_code.value, self.status_code.to_bytes()))
         for key, value in iter(self.headers):
-            socket.send(b"%b: %b\r\n" % (bytes(key, "utf-8"), bytes(value, "utf-8")))
+            socket.send(b"%b: %b\r\n" %
+                        (bytes(key, "utf-8"), bytes(value, "utf-8")))
         socket.send(b"\r\n")
         if self.body is not None:
             socket.send(self.body.to_bytes())

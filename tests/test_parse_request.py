@@ -1,5 +1,4 @@
 from libbbs.body import Body
-from urllib import parse
 from libbbs.parse_request import RequestParser
 from libbbs.request import Request
 
@@ -30,6 +29,7 @@ def test_headers_separated_input():
     expected = Request(uri="/index.html")
     expected["host"] = "localhost"
     expected["accept"] = "*/*"
+
     parser = RequestParser()
     parser.try_parse(b"GET /index.html H")
     parser.try_parse(b"TTP/1.1\r\nHost: loc")
@@ -47,10 +47,10 @@ def test_header_is_case_insensitive():
     assert expected == parser.complete()
 
 
-def test_body_separated_input():
+def test_body():
     expected = Request(uri="/index.html")
     expected["content-length"] = "13"
-    expected.body = b"Hello, World!"
+    expected.body = Body(b"Hello, World!")
     parser = RequestParser()
     assert parser.try_parse(
         b"GET /index.html HTTP/1.1\r\nContent-Length: 13\r\n\r\nHello, World!")
@@ -61,6 +61,7 @@ def test_body_separated_input():
     expected = Request(uri="/index.html")
     expected["content-length"] = "13"
     expected.body = Body(b"Hello, World!")
+
     parser = RequestParser()
     parser.try_parse(b"GET /index.html HT")
     parser.try_parse(b"TP/1.1\r\nContent-Le")
