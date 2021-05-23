@@ -23,6 +23,7 @@ class StatusCode(Enum):
     OK = 200
     BAD_REQUEST = 400
     NOT_FOUND = 404
+    INTERNAL_SERVER_ERROR = 500
 
     def to_bytes(self) -> bytes:
         if self == StatusCode.OK:
@@ -52,4 +53,8 @@ class HttpError(Exception):
 
 
 class BadRequest(HttpError):
+    pass
+
+
+class InternalServerError(HttpError):
     pass
