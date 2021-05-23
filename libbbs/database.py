@@ -5,6 +5,8 @@ from enum import Enum, auto
 
 
 class Comparison(Enum):
+    r""" This class is used to specify search condition in `Db`.
+    """
     EQ = auto()
     NE = auto()
     LT = auto()
@@ -17,11 +19,18 @@ C = TypeVar("C", bound="Comparable")
 
 
 class Comparable(Protocol):
+    r""" Protocol class to indicate total order.
+
+    This class is used for lower bound of type variable.
+    Without this class, mypy cannot infer a type variable can be compared to
+    other object.
+    """
+
     @abstractmethod
     def __eq__(self, other: Any) -> bool:
         pass
 
-    def __ne__(self, other: C) -> bool:
+    def __ne__(self, other: Any) -> bool:
         return not self == other
 
     @abstractmethod
@@ -42,8 +51,37 @@ VT = TypeVar("VT", bound=Comparable)
 
 
 class QueryableBy(ABC, Generic[VT]):
+    r""" Abstract class which is stored to `Db`.
+
+    This class provides an interface to specific instance variable to use in
+    `Db.query()`.
+    """
+
     @abstractmethod
-    def get(self) -> VT: ...
+    def get(self) -> VT:
+        r""" Interface to access instance variable. A class implementing this
+        abstract class is queried by the variable.
+
+        Returns
+        -------
+        VT
+            Instance variable.
+
+        Example
+        -------
+        In the following example, `Model` class is queried by its `name` in a
+        `Db`.
+
+        ```
+        @dataclass
+        class Model(QueryableBy[int]):
+        name: int
+
+        def get(self) -> int:
+            return self.name
+        ```
+        """
+        ...
 
 
 T = TypeVar("T", bound=Comparable)
@@ -51,9 +89,28 @@ T = TypeVar("T", bound=Comparable)
 
 @dataclass
 class Db(Generic[T]):
+    r""" Simple database class.
+
+    This just holds data in a list. Not performant and useful.
+    """
+
     __inner: List[QueryableBy[T]]
 
     def query(self, target: T, comp: Comparison = Comparison.EQ) -> List[QueryableBy[T]]:
+        r""" Find data matching a condition.
+
+        Parameters
+        ----------
+        target: T
+            Right hand side of comparison.
+        comp: Comparison
+            Specify comparison operator to match data.
+
+        Returns
+        -------
+        List[Queryable[T]]
+            List of data matching a condition.
+        """
         if comp == Comparison.EQ:
             return [x for x in self.__inner if x.get() == target]
         elif comp == Comparison.NE:
