@@ -11,17 +11,18 @@ Handler = Callable[[Request], Response]
 
 @dataclasses.dataclass
 class Router:
-    routing: dict[tuple[str, Method], Handler] = dataclasses.field(init=False)
+    __routing: dict[tuple[str, Method],
+                    Handler] = dataclasses.field(init=False)
 
     def __post_init__(self):
-        self.routing = {}
+        self.__routing = {}
 
     def route(self, uri: str, method: Method, handler: Handler) -> None:
-        self.routing[(uri, method)] = handler
+        self.__routing[(uri, method)] = handler
 
     def dispatch(self, uri: str, method: Method) -> Handler:
         try:
-            return self.routing[(uri, method)]
+            return self.__routing[(uri, method)]
         except Exception:
             return not_found_handler
 

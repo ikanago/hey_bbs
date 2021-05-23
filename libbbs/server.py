@@ -1,7 +1,7 @@
 from libbbs.router import Handler, Router
 from libbbs.misc import BadRequest, Method, StatusCode
 from libbbs.response import Response
-from libbbs.parse_request import parse_request
+from libbbs.parse_request import RequestParser
 import socket
 import threading
 
@@ -30,25 +30,21 @@ class Server:
             thread.daemon = True
             thread.start()
 
+    @staticmethod
     def handle_sock(client_sock: socket.socket, router: Router) -> None:
-        buffer = b""
-        # Parse request line and header
+        parser = RequestParser()
         while True:
             message = client_sock.recv(Server.BUFSIZE)
-            buffer += message
-            end_of_header = buffer.find(b"\r\n\r\n")
-            if end_of_header >= 0:
-                request_message = buffer[:end_of_header]
-                # Skip CRLF to parse request body
-                buffer = buffer[(end_of_header + 4):]
+            is_parse_complete = parser.try_parse(message)
+            if is_parse_complete:
                 break
 
         try:
-            req = parse_request(request_message)
+            req = parser.complete()
             res = router.dispatch(req.uri, req.method)(req)
             print(req)
         except BadRequest:
-            res = Response.from_status_code(StatusCode.BAD_REQUEST)
+            res = Response(status_code=StatusCode.BAD_REQUEST)
 
         res.send(client_sock)
         client_sock.close()

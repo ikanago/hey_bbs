@@ -25,11 +25,11 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install pipenv
 
-      - name: Install pytest
+      - name: Install Dependencies
         run: pipenv sync --dev
 
-      - name: Check Format
-        run: pipenv run format
+      - name: Type Check
+        run: pipenv run type
 
       - name: Unit Test
         run: pipenv run test
