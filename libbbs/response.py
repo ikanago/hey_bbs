@@ -27,6 +27,14 @@ class Response:
             raise KeyError
         self.headers[key] = value
 
+    @staticmethod
+    def ok() -> Response:
+        return Response(status_code=StatusCode.OK)
+
+    @staticmethod
+    def not_found() -> Response:
+        return Response(status_code=StatusCode.NOT_FOUND)
+
     def send(self, socket: socket.socket):
         socket.send(b"%b %d %b\r\n" % (
             self.version, self.status_code.value, self.status_code.to_bytes()))
@@ -45,8 +53,8 @@ class Response:
 
     def set_body(self, to_body: Body, mime_type: Optional[str] = None):
         self.body = to_body
-        self["content-length"] = str(len(self.body))
+        self["Content-Length"] = str(len(self.body))
         if mime_type is None:
-            self["content-type"] = Mime.TEXT_PLAIN
+            self["Content-Type"] = Mime.TEXT_PLAIN
         else:
-            self["content-type"] = mime_type
+            self["Content-Type"] = mime_type
