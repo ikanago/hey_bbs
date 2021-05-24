@@ -1,10 +1,22 @@
 from dataclasses import dataclass
+from tests.test_middleware import VALUE
 from dataclasses_json import DataClassJsonMixin
 from libbbs.body import Body
 from libbbs.response import Response
 from libbbs.request import Request
+from libbbs.middleware import Middleware, Next
 from libbbs.misc import Method, StatusCode
 from libbbs.server import Server
+
+VALUE = "test"
+
+
+class TestMiddleware(Middleware):
+    def call(self, req: Request, next: Next) -> Response:
+        req["A"] = VALUE
+        res = next.run(req)
+        res["A"] = VALUE
+        return res
 
 
 @dataclass
@@ -27,6 +39,7 @@ def echo(req: Request) -> Response:
 
 
 server = Server(8080)
+server.use(TestMiddleware())
 server.route("/", Method.GET, hello)
 server.route("/", Method.POST, echo)
 server.run()

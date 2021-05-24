@@ -1,7 +1,9 @@
+from typing import List
 from libbbs.router import Handler, Router
 from libbbs.misc import BadRequest, InternalServerError, Method, StatusCode
-from libbbs.response import Response
+from libbbs.middleware import Middleware, Next
 from libbbs.parse_request import RequestParser
+from libbbs.response import Response
 import socket
 import threading
 
@@ -14,6 +16,10 @@ class Server:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
         self.router = Router()
+        self.middlewares: List[Middleware] = []
+
+    def use(self, middleware: Middleware):
+        self.middlewares.append(middleware)
 
     def route(self, uri: str, method: Method, handler: Handler):
         self.router.route(uri, method, handler)
@@ -26,12 +32,12 @@ class Server:
         while True:
             client_sock, _ = self.sock.accept()
             thread = threading.Thread(
-                target=Server.handle_sock, args=(client_sock,  self.router))
+                target=Server.handle_sock, args=(client_sock, self.router, self.middlewares))
             thread.daemon = True
             thread.start()
 
     @staticmethod
-    def handle_sock(client_sock: socket.socket, router: Router) -> None:
+    def handle_sock(client_sock: socket.socket, router: Router, middlewares: List[Middleware]) -> None:
         parser = RequestParser()
         while True:
             message = client_sock.recv(Server.BUFSIZE)
@@ -41,7 +47,8 @@ class Server:
 
         try:
             req = parser.complete()
-            res = router.dispatch(req.uri, req.method)(req)
+            next = Next(router.dispatch(req.uri, req.method), middlewares)
+            res = next.run(req)
             print(req)
         except BadRequest:
             res = Response(status_code=StatusCode.BAD_REQUEST)
