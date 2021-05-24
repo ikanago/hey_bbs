@@ -1,6 +1,6 @@
 from __future__ import annotations
 import dataclasses
-from typing import Iterator
+from typing import Iterator, Optional
 
 
 @dataclasses.dataclass
@@ -10,12 +10,12 @@ class HeaderMap:
     def __post_init__(self):
         self.__headers = {}
 
-    def __getitem__(self, key: str) -> str:
+    def get(self, key: str) -> Optional[str]:
         if not isinstance(key, str):
             raise KeyError
-        return self.__headers[key.lower()]
+        return self.__headers.get(key.lower())
 
-    def __setitem__(self, key: str, value: str):
+    def set(self, key: str, value: str):
         if not isinstance(key, str):
             raise KeyError
         self.__headers[key.lower()] = value

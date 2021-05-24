@@ -5,6 +5,7 @@ from enum import Enum
 class Method(Enum):
     GET = b"GET"
     POST = b"POST"
+    OPTIONS = b"OPTIONS"
 
     def __str__(self) -> str:
         return self.value.decode()

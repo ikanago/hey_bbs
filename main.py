@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from tests.test_middleware import VALUE
 from dataclasses_json import DataClassJsonMixin
 from libbbs.body import Body
 from libbbs.response import Response
@@ -13,9 +12,9 @@ VALUE = "test"
 
 class TestMiddleware(Middleware):
     def call(self, req: Request, next: Next) -> Response:
-        req["A"] = VALUE
+        req.set("A", VALUE)
         res = next.run(req)
-        res["A"] = VALUE
+        res.set("A", VALUE)
         return res
 
 

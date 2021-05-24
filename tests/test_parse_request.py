@@ -17,8 +17,8 @@ def test_url_encoded():
 
 def test_headers():
     expected = Request(uri="/index.html")
-    expected["host"] = "localhost"
-    expected["accept"] = "*/*"
+    expected.set("host", "localhost")
+    expected.set("accept", "*/*")
     parser = RequestParser()
     assert parser.try_parse(
         b"GET /index.html HTTP/1.1\r\nHost: localhost\r\nAccept: */*\r\n\r\n")
@@ -27,8 +27,8 @@ def test_headers():
 
 def test_headers_separated_input():
     expected = Request(uri="/index.html")
-    expected["host"] = "localhost"
-    expected["accept"] = "*/*"
+    expected.set("host", "localhost")
+    expected.set("accept", "*/*")
 
     parser = RequestParser()
     parser.try_parse(b"GET /index.html H")
@@ -40,7 +40,7 @@ def test_headers_separated_input():
 
 def test_header_is_case_insensitive():
     expected = Request(uri="/index.html")
-    expected["accept"] = "*/*"
+    expected.set("accept", "*/*")
     parser = RequestParser()
     assert parser.try_parse(
         b"GET /index.html HTTP/1.1\r\nAccEpT: */*\r\n\r\n")
@@ -49,7 +49,7 @@ def test_header_is_case_insensitive():
 
 def test_body():
     expected = Request(uri="/index.html")
-    expected["content-length"] = "13"
+    expected.set("content-length", "13")
     expected.body = Body(b"Hello, World!")
     parser = RequestParser()
     assert parser.try_parse(
@@ -59,7 +59,7 @@ def test_body():
 
 def test_body_separated_input():
     expected = Request(uri="/index.html")
-    expected["content-length"] = "13"
+    expected.set("content-length", "13")
     expected.body = Body(b"Hello, World!")
 
     parser = RequestParser()

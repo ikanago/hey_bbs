@@ -17,18 +17,22 @@ class Request:
     def __post_init__(self):
         self.headers = HeaderMap()
 
-    def __getitem__(self, key: str) -> str:
+    def get(self, key: str) -> Optional[str]:
         if not isinstance(key, str):
             raise KeyError
-        return self.headers[key]
+        return self.headers.get(key)
 
-    def __setitem__(self, key: str, value: str):
+    def set(self, key: str, value: str):
         if not isinstance(key, str):
             raise KeyError
-        self.headers[key] = value
+        self.headers.set(key, value)
 
     def content_length(self) -> Optional[int]:
         try:
-            return int(self["content-length"])
+            value = self.get("content-length")
+            if value is None:
+                return None
+            else:
+                return int(value)
         except (KeyError, ValueError):
             return None
