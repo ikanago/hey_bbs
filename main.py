@@ -37,8 +37,8 @@ def echo(req: Request) -> Response:
     return res
 
 
-server = Server(8080)
+server = Server()
 server.use(TestMiddleware())
 server.route("/", Method.GET, hello)
 server.route("/", Method.POST, echo)
-server.run()
+server.run(8080)

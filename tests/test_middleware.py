@@ -36,4 +36,4 @@ def test_middleware():
     res = next.run(Request())
     assert VALUE == res.get("A")
     assert VALUE == res.get("B")
-    assert 200 == res.status_code.value
+    assert StatusCode.OK == res.status_code

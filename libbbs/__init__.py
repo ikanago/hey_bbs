@@ -1,4 +1,5 @@
 from .body import Body
+from .cors import Cors
 from .middleware import Middleware, Next
 from .request import Request
 from .response import Response
