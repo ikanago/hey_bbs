@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from dataclasses_json import DataClassJsonMixin
 from libbbs.body import Body
+from libbbs.cors import Cors
 from libbbs.response import Response
 from libbbs.request import Request
 from libbbs.middleware import Middleware, Next
@@ -38,7 +39,7 @@ def echo(req: Request) -> Response:
 
 
 server = Server()
-server.use(TestMiddleware())
+server.use(Cors(allow_origin="localhost:3000"))
 server.route("/", Method.GET, hello)
 server.route("/", Method.POST, echo)
 server.run(8080)

@@ -1,3 +1,5 @@
+from dataclasses import dataclass, field
+from enum import Flag
 from typing import List
 from libbbs.router import Handler, Router
 from libbbs.misc import BadRequest, InternalServerError, Method, StatusCode
@@ -9,13 +11,15 @@ import socket
 import threading
 
 
-
+@dataclass
 class Server:
     BUFSIZE = 4096
+    router: Router = field(default_factory=Router)
+    middlewares: List[Middleware] = field(default_factory=list)
 
-    def __init__(self, router: Router = Router(), middlewares: List[Middleware] = []) -> None:
-        self.router = router
-        self.middlewares = middlewares
+    # def __post_init__(self, router: Router = Router(), middlewares: List[Middleware] = []) -> None:
+    #     self.router = router
+    #     self.middlewares = middlewares
 
     def use(self, middleware: Middleware):
         self.middlewares.append(middleware)
@@ -48,14 +52,16 @@ class Server:
 
         req = parser.complete()
         print(req)
-        server = Server(router, middlewares)
-        res = server.responde(req)
+        server = Server(router=router, middlewares=middlewares)
+        res = server.respond(req)
         res.send(client_sock)
         client_sock.close()
 
-    def responde(self, req: Request):
+    def respond(self, req: Request):
         try:
-            next = Next(self.router.dispatch(req.uri, req.method), self.middlewares)
+            next = Next(self.router.dispatch(
+                req.uri, req.method), self.middlewares)
+            print("respond", self.middlewares)
             return next.run(req)
         except BadRequest:
             return Response(status_code=StatusCode.BAD_REQUEST)

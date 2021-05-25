@@ -28,4 +28,5 @@ class Cors(Middleware):
 
         res = next.run(req)
         res.set("Access-Control-Allow-Origin", self.allow_origin)
+        # print(res.get("Access-Control-Allow-Origin"))
         return res
