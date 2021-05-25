@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from libbbs.misc import BadRequest, InternalServerError
+from libbbs.misc import BadRequest
 from typing import Type
 from dataclasses_json import DataClassJsonMixin
 

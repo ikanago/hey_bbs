@@ -17,15 +17,15 @@ class Response:
     def __post_init__(self):
         self.headers = HeaderMap()
 
-    def __getitem__(self, key: str) -> str:
+    def get(self, key: str) -> Optional[str]:
         if not isinstance(key, str):
             raise KeyError
-        return self.headers[key]
+        return self.headers.get(key)
 
-    def __setitem__(self, key: str, value: str):
+    def set(self, key: str, value: str):
         if not isinstance(key, str):
             raise KeyError
-        self.headers[key] = value
+        self.headers.set(key, value)
 
     def send(self, socket: socket.socket):
         socket.send(b"%b %d %b\r\n" % (
@@ -45,8 +45,8 @@ class Response:
 
     def set_body(self, to_body: Body, mime_type: Optional[str] = None):
         self.body = to_body
-        self["content-length"] = str(len(self.body))
+        self.set("Content-Length", str(len(self.body)))
         if mime_type is None:
-            self["content-type"] = Mime.TEXT_PLAIN
+            self.set("Content-Type", Mime.TEXT_PLAIN)
         else:
-            self["content-type"] = mime_type
+            self.set("Content-Type", mime_type)

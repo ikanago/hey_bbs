@@ -7,5 +7,5 @@ def test_set_body():
     res = Response()
     res.set_body(Body(b"Hello"), Mime.APPLICATION_JSON)
     assert Body(b"Hello") == res.body
-    assert "5" == res["content-length"]
-    assert "application/json" == res["content-type"]
+    assert "5" == res.get("content-length")
+    assert "application/json" == res.get("content-type")

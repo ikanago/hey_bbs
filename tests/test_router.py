@@ -5,7 +5,7 @@ from libbbs.router import Router
 
 
 def ok(_: Request) -> Response:
-    return Response(status_code=StatusCode.OK)
+    return Response()
 
 
 def test_router():

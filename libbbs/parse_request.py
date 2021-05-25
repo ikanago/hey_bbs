@@ -98,7 +98,7 @@ class RequestParser:
                 # Empty line indicating the end of headers.
                 break
             key, value = _parse_header(header)
-            req[key] = value
+            req.set(key, value)
         return req
 
 

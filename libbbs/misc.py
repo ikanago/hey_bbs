@@ -5,6 +5,7 @@ from enum import Enum
 class Method(Enum):
     GET = b"GET"
     POST = b"POST"
+    OPTIONS = b"OPTIONS"
 
     def __str__(self) -> str:
         return self.value.decode()
@@ -22,6 +23,7 @@ class Method(Enum):
 class StatusCode(Enum):
     OK = 200
     BAD_REQUEST = 400
+    UNAUTHORIZED = 401
     NOT_FOUND = 404
     INTERNAL_SERVER_ERROR = 500
 
@@ -30,6 +32,8 @@ class StatusCode(Enum):
             return b"OK"
         elif self == StatusCode.BAD_REQUEST:
             return b"Bad Request"
+        elif self == StatusCode.UNAUTHORIZED:
+            return b"Unauthorized"
         elif self == StatusCode.NOT_FOUND:
             return b"Not Found"
         else:

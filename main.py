@@ -1,10 +1,22 @@
 from dataclasses import dataclass
 from dataclasses_json import DataClassJsonMixin
 from libbbs.body import Body
+from libbbs.cors import Cors
 from libbbs.response import Response
 from libbbs.request import Request
+from libbbs.middleware import Middleware, Next
 from libbbs.misc import Method, StatusCode
 from libbbs.server import Server
+
+VALUE = "test"
+
+
+class TestMiddleware(Middleware):
+    def call(self, req: Request, next: Next) -> Response:
+        req.set("A", VALUE)
+        res = next.run(req)
+        res.set("A", VALUE)
+        return res
 
 
 @dataclass
@@ -14,7 +26,7 @@ class User(DataClassJsonMixin):
 
 
 def hello(_: Request) -> Response:
-    return Response(status_code=StatusCode.OK)
+    return Response()
 
 
 def echo(req: Request) -> Response:
@@ -26,7 +38,8 @@ def echo(req: Request) -> Response:
     return res
 
 
-server = Server(8080)
+server = Server()
+server.use(Cors(allow_origin="localhost:3000"))
 server.route("/", Method.GET, hello)
 server.route("/", Method.POST, echo)
-server.run()
+server.run(8080)
