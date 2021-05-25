@@ -26,7 +26,7 @@ class User(DataClassJsonMixin):
 
 
 def hello(_: Request) -> Response:
-    return Response(status_code=StatusCode.OK)
+    return Response()
 
 
 def echo(req: Request) -> Response:

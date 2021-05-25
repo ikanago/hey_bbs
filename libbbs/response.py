@@ -27,14 +27,6 @@ class Response:
             raise KeyError
         self.headers.set(key, value)
 
-    @staticmethod
-    def ok() -> Response:
-        return Response(status_code=StatusCode.OK)
-
-    @staticmethod
-    def not_found() -> Response:
-        return Response(status_code=StatusCode.NOT_FOUND)
-
     def send(self, socket: socket.socket):
         socket.send(b"%b %d %b\r\n" % (
             self.version, self.status_code.value, self.status_code.to_bytes()))

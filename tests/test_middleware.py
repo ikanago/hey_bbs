@@ -28,7 +28,7 @@ def handler(req: Request) -> Response:
     # and "B" must be set.
     assert VALUE == req.get("A")
     assert VALUE == req.get("B")
-    return Response(status_code=StatusCode.OK)
+    return Response()
 
 
 def test_middleware():

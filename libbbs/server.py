@@ -61,7 +61,6 @@ class Server:
         try:
             next = Next(self.router.dispatch(
                 req.uri, req.method), self.middlewares)
-            print("respond", self.middlewares)
             return next.run(req)
         except BadRequest:
             return Response(status_code=StatusCode.BAD_REQUEST)

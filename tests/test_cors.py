@@ -55,3 +55,13 @@ def test_without_origin_header(server_specific_origin: Server):
     res = server_specific_origin.respond(Request())
     assert res.is_success()
     assert None is res.get("Access-Control-Allow-Origin")
+
+
+def test_handle_preflight_req(server_specific_origin: Server):
+    req = Request(method=Method.OPTIONS)
+    req.set("Origin", ALLOW_ORIGIN)
+    res = server_specific_origin.respond(req)
+    assert ALLOW_ORIGIN == res.get("Access-Control-Allow-Origin")
+    assert "POST, GET, OPTIONS" == res.get("Access-Control-Allow-Methods")
+    assert "*" == res.get("Access-Control-Allow-Headers")
+    assert "86400" == res.get("Access-Control-Allow-Max-Age")
