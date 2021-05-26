@@ -22,6 +22,7 @@ class Body:
         return body
 
     T = TypeVar("T", bound=DataClassJsonMixin)
+
     def from_json(self, model: Type[T]) -> T:
         r"""Parse `Body` as JSON and return corresponding type.
 
