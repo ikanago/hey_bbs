@@ -1,6 +1,12 @@
 from dataclasses import dataclass, field
 from typing import List
 from dataclasses_json import DataClassJsonMixin
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.sql.schema import Column
+from sqlalchemy.sql.sqltypes import Integer, String
+
+
+Base = declarative_base()
 
 
 @dataclass
@@ -14,11 +20,10 @@ class Users(DataClassJsonMixin):
     _users: List[User]
 
 
-@dataclass
-class Post(DataClassJsonMixin):
-    id: int
-    user_id: int
-    text: str
+class Post(Base):
+    __tablename__ = "post"
+    id = Column(Integer, primary_key=True)
+    text = Column(String(255))
 
 
 @dataclass

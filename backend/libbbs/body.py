@@ -15,6 +15,9 @@ class Body:
     def __len__(self) -> int:
         return len(self.__inner)
 
+    def __str__(self) -> str:
+        return self.__inner
+
     @staticmethod
     def from_str(inner: str) -> Body:
         body = Body(b"")
@@ -71,7 +74,6 @@ class Body:
         """
         if isinstance(data, DataClassJsonMixin):
             return Body.from_str(data.to_json())
-        print("hoge")
         raise BadRequest
 
     def to_bytes(self) -> bytes:
