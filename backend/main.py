@@ -25,12 +25,16 @@ SessionClass = sessionmaker(engine)
 session = SessionClass()
 
 
-def get_posts(_req: Request) -> Response:
-    posts = session.query(Post).limit(5).all()
+def get_posts_inner() -> Response:
+    posts = session.query(Post).order_by(Post.id.desc()).limit(5).all()
     res = Response()
-    body = dumps(list(map(lambda p: p.to_json(), posts)))
+    body = dumps(posts, cls=PostEncoder)
     res.set_body(Body.from_str(body))
     return res
+
+
+def get_posts(_req: Request) -> Response:
+    return get_posts_inner()
 
 
 def create_post(req: Request) -> Response:
@@ -41,11 +45,7 @@ def create_post(req: Request) -> Response:
     session.add(post)
     session.commit()
 
-    posts = session.query(Post).order_by(Post.id.desc()).limit(5).all()
-    res = Response()
-    body = dumps(posts, cls=PostEncoder)
-    res.set_body(Body.from_str(body))
-    return res
+    return get_posts_inner()
 
 
 def main():

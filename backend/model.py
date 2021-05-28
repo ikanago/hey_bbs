@@ -24,7 +24,8 @@ class Users(DataClassJsonMixin):
 
 class Post(Base):
     __tablename__ = "post"
-    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
+    id = Column(Integer, primary_key=True, autoincrement=True,
+                nullable=False, unique=True)
     text = Column(String(255))
 
     def from_json(json: str) -> Post:
