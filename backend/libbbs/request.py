@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Optional
 from libbbs.body import Body
-from libbbs.header_map import HeaderMap
+from libbbs.header_map import CaseInsensitiveMap
 from libbbs.misc import Method
 import dataclasses
 
@@ -11,11 +11,11 @@ class Request:
     method: Method = Method.GET
     uri: str = "/"
     version: bytes = b"HTTP/1.1"
-    __headers: HeaderMap = dataclasses.field(init=False)
+    __headers: CaseInsensitiveMap = dataclasses.field(init=False)
     body: Optional[Body] = dataclasses.field(default=None)
 
     def __post_init__(self):
-        self.__headers = HeaderMap()
+        self.__headers = CaseInsensitiveMap()
 
     def get(self, key: str) -> Optional[str]:
         r""" Get header value.

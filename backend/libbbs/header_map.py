@@ -4,7 +4,7 @@ from typing import Iterator, Optional
 
 
 @dataclasses.dataclass
-class HeaderMap:
+class CaseInsensitiveMap:
     __headers: dict[str, str] = dataclasses.field(init=False)
 
     def __post_init__(self):
