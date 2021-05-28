@@ -8,6 +8,7 @@ dataclasses-json = "*"
 sqlalchemy = "*"
 pymysql = "*"
 cryptography = "*"
+marshmallow-sqlalchemy = "*"
 
 [dev-packages]
 pytest = "*"

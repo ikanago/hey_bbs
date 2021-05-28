@@ -1,6 +1,4 @@
-from typing import List
-from json import load
-
+from json import dumps
 import sqlalchemy
 from libbbs.body import Body
 from libbbs.cors import Cors
@@ -9,14 +7,13 @@ from libbbs.request import Request
 from libbbs.middleware import Middleware, Next
 from libbbs.misc import Method, StatusCode
 from libbbs.server import Server
-from model import Base, Post, Posts
+from model import Base, Post
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 
-# posts: Posts = Posts([Post(1, 1, "hoge"), Post(2, 1, "fuga")])
-
-engine = create_engine("mysql+pymysql://root:test@db:3306/testdb", pool_pre_ping=True)
+engine = create_engine(
+    "mysql+pymysql://root:test@db:3306/testdb", pool_pre_ping=True)
 while True:
     # Wait until database is ready.
     try:
@@ -27,10 +24,12 @@ while True:
 SessionClass = sessionmaker(engine)
 session = SessionClass()
 
-def get_posts(req: Request) -> Response:
+
+def get_posts(_req: Request) -> Response:
+    posts = session.query(Post).limit(5).all()
     res = Response()
-    body = Body.to_json(posts)
-    res.set_body(body)
+    body = dumps(list(map(lambda p: p.to_json(), posts)))
+    res.set_body(Body.from_str(body))
     return res
 
 
@@ -38,17 +37,14 @@ def create_post(req: Request) -> Response:
     if req.body is None:
         return Response(status_code=StatusCode.BAD_REQUEST)
 
-    post = load(str(req.body))
-    post = Post(id=int(post["id"]), text=post["text"])
-    print(post)
+    post = Post.from_json(str(req.body))
     session.add(post)
     session.commit()
 
-    posts = session.query(Post).all()
-    print(posts)
+    posts = session.query(Post).limit(5).all()
     res = Response()
-    # body = Body.to_json(posts)
-    # res.set_body(body)
+    body = dumps(list(map(lambda p: p.to_json(), posts)))
+    res.set_body(Body.from_str(body))
     return res
 
 

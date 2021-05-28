@@ -1,10 +1,12 @@
+from __future__ import annotations
 from dataclasses import dataclass, field
+from json import dumps, loads
 from typing import List
 from dataclasses_json import DataClassJsonMixin
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import Integer, String
-
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 Base = declarative_base()
 
@@ -22,15 +24,21 @@ class Users(DataClassJsonMixin):
 
 class Post(Base):
     __tablename__ = "post"
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
     text = Column(String(255))
 
+    def from_json(json: str) -> Post:
+        data = loads(json)
+        return Post(text=data["text"])
 
-@dataclass
-class Posts(DataClassJsonMixin):
-    _posts: List[Post]
-    _registered_id: int = field(default=1, init=False)
+    def to_json(self) -> str:
+        data = {
+            "id": str(self.id),
+            "text": self.text,
+        }
+        return dumps(data)
 
-    def create_post(self, post: Post) -> None:
-        self._registered_id += 1
-        self._posts.append(post)
+
+class PostSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Post
