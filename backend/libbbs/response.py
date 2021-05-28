@@ -18,11 +18,32 @@ class Response:
         self.headers = HeaderMap()
 
     def get(self, key: str) -> Optional[str]:
+        r""" Get header value.
+
+        Parameters
+        ----------
+        key: str
+            Header name to get.
+
+        Returns
+        -------
+        str
+            Header value corresponding to the key.
+        """
         if not isinstance(key, str):
             raise KeyError
         return self.headers.get(key)
 
     def set(self, key: str, value: str):
+        r""" Set header value to the key.
+
+        Parameters
+        ----------
+        key: str
+            Header name to set.
+        value: str
+            Header value to set.
+        """
         if not isinstance(key, str):
             raise KeyError
         self.headers.set(key, value)
@@ -50,3 +71,21 @@ class Response:
             self.set("Content-Type", Mime.TEXT_PLAIN)
         else:
             self.set("Content-Type", mime_type)
+
+
+def moved_permanently(uri: str) -> Response:
+    res = Response(status_code=StatusCode.MovedPermanently)
+    res.set("Location", uri)
+    return res
+
+
+def found(uri: str) -> Response:
+    res = Response(status_code=StatusCode.Found)
+    res.set("Location", uri)
+    return res
+
+
+def see_other(uri: str) -> Response:
+    res = Response(status_code=StatusCode.SeeOther)
+    res.set("Location", uri)
+    return res

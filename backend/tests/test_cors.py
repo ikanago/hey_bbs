@@ -1,7 +1,7 @@
 from libbbs.body import Body
 from libbbs.response import Response
 from libbbs.request import Request
-from libbbs.misc import Method, StatusCode
+from libbbs.misc import Method
 from libbbs.server import Server
 import pytest
 from libbbs.cors import Cors

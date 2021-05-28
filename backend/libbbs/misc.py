@@ -24,6 +24,9 @@ class Method(Enum):
 
 class StatusCode(Enum):
     OK = 200
+    MovedPermanently = 301
+    Found = 302
+    SeeOther = 303
     BAD_REQUEST = 400
     UNAUTHORIZED = 401
     NOT_FOUND = 404
@@ -32,6 +35,12 @@ class StatusCode(Enum):
     def to_bytes(self) -> bytes:
         if self == StatusCode.OK:
             return b"OK"
+        elif self == StatusCode.MovedPermanently:
+            return "Moved Permanently"
+        elif self == StatusCode.Found:
+            return "Found"
+        elif self == StatusCode.SeeOther:
+            return "See Other"
         elif self == StatusCode.BAD_REQUEST:
             return b"Bad Request"
         elif self == StatusCode.UNAUTHORIZED:
@@ -44,6 +53,9 @@ class StatusCode(Enum):
 
     def is_success(self) -> bool:
         return 200 <= self.value < 400
+
+    def is_redirect(self) -> bool:
+        return 300 <= self.value < 400
 
     def is_failure(self) -> bool:
         return 400 <= self.value < 600

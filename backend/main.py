@@ -4,7 +4,6 @@ from libbbs.body import Body
 from libbbs.cors import Cors
 from libbbs.response import Response
 from libbbs.request import Request
-from libbbs.middleware import Middleware, Next
 from libbbs.misc import Method, StatusCode
 from libbbs.server import Server
 from model import Base, Post, PostEncoder

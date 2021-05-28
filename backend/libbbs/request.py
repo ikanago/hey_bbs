@@ -18,11 +18,32 @@ class Request:
         self.headers = HeaderMap()
 
     def get(self, key: str) -> Optional[str]:
+        r""" Get header value.
+
+        Parameters
+        ----------
+        key: str
+            Header name to get.
+
+        Returns
+        -------
+        str
+            Header value corresponding to the key.
+        """
         if not isinstance(key, str):
             raise KeyError
         return self.headers.get(key)
 
     def set(self, key: str, value: str):
+        r""" Set header value to the key.
+
+        Parameters
+        ----------
+        key: str
+            Header name to set.
+        value: str
+            Header value to set.
+        """
         if not isinstance(key, str):
             raise KeyError
         self.headers.set(key, value)

@@ -3,7 +3,7 @@ from libbbs.body import Body
 from libbbs.misc import BadRequest, Method
 from libbbs.request import Request
 from urllib.parse import unquote
-from typing import Literal, Optional
+from typing import Literal
 import dataclasses
 
 
