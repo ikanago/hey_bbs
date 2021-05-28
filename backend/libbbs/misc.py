@@ -16,6 +16,8 @@ class Method(Enum):
             return Method.GET
         elif method == b"POST":
             return Method.POST
+        elif method == b"OPTIONS":
+            return Method.OPTIONS
         else:
             raise BadRequest
 

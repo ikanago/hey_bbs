@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from libbbs.misc import BadRequest
-from typing import Type
+from typing import Type, TypeVar
 from dataclasses_json import DataClassJsonMixin
 
 
@@ -15,13 +15,18 @@ class Body:
     def __len__(self) -> int:
         return len(self.__inner)
 
+    def __str__(self) -> str:
+        return self.__inner
+
     @staticmethod
     def from_str(inner: str) -> Body:
         body = Body(b"")
         body.__inner = inner
         return body
 
-    def from_json(self, model: Type[DataClassJsonMixin]) -> DataClassJsonMixin:
+    T = TypeVar("T", bound=DataClassJsonMixin)
+
+    def from_json(self, model: Type[T]) -> T:
         r"""Parse `Body` as JSON and return corresponding type.
 
         Parameter
@@ -67,7 +72,7 @@ class Body:
         BadRequest
             If `model` is not subclass of DataClassJsonMixin.
         """
-        if not isinstance(data, DataClassJsonMixin):
+        if isinstance(data, DataClassJsonMixin):
             return Body.from_str(data.to_json())
         raise BadRequest
 

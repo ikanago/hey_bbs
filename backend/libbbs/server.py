@@ -62,7 +62,7 @@ class Server:
             next = Next(self.router.dispatch(
                 req.uri, req.method), self.middlewares)
             return next.run(req)
-        except BadRequest:
-            return Response(status_code=StatusCode.BAD_REQUEST)
         except InternalServerError:
             return Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
+        except Exception:
+            return Response(status_code=StatusCode.BAD_REQUEST)
