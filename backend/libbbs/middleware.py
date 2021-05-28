@@ -2,7 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from libbbs.response import Response
-from typing import Callable, List
+from typing import List
 from .request import Request
 from .router import Handler
 

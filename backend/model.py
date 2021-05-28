@@ -1,25 +1,11 @@
 from __future__ import annotations
-from dataclasses import dataclass, field
 from json import dumps, loads, JSONEncoder
-from typing import Any, Dict, List
-from dataclasses_json import DataClassJsonMixin
+from typing import Any, Dict
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import Integer, String
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 Base = declarative_base()
-
-
-@dataclass
-class User(DataClassJsonMixin):
-    id: int
-    username: str
-
-
-@dataclass
-class Users(DataClassJsonMixin):
-    _users: List[User]
 
 
 class Post(Base):

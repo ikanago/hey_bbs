@@ -1,8 +1,7 @@
 from dataclasses import dataclass, field
-from enum import Flag
 from typing import List
 from libbbs.router import Handler, Router
-from libbbs.misc import BadRequest, InternalServerError, Method, StatusCode
+from libbbs.misc import InternalServerError, Method, StatusCode
 from libbbs.middleware import Middleware, Next
 from libbbs.parse_request import RequestParser
 from libbbs.request import Request

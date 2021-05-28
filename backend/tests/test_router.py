@@ -1,4 +1,4 @@
-from libbbs.misc import Method, StatusCode
+from libbbs.misc import Method
 from libbbs.request import Request
 from libbbs.response import Response
 from libbbs.router import Router
