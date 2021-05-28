@@ -7,7 +7,7 @@ from libbbs.request import Request
 from libbbs.middleware import Middleware, Next
 from libbbs.misc import Method, StatusCode
 from libbbs.server import Server
-from model import Base, Post
+from model import Base, Post, PostEncoder
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -41,16 +41,16 @@ def create_post(req: Request) -> Response:
     session.add(post)
     session.commit()
 
-    posts = session.query(Post).limit(5).all()
+    posts = session.query(Post).order_by(Post.id.desc()).limit(5).all()
     res = Response()
-    body = dumps(list(map(lambda p: p.to_json(), posts)))
+    body = dumps(posts, cls=PostEncoder)
     res.set_body(Body.from_str(body))
     return res
 
 
 def main():
     server = Server()
-    server.use(Cors(allow_origin="localhost:3000"))
+    server.use(Cors(allow_origin="http://localhost:3000"))
     server.route("/posts", Method.GET, get_posts)
     server.route("/posts", Method.POST, create_post)
     server.run(8080)

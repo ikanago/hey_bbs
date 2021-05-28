@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
-from json import dumps, loads
-from typing import List
+from json import dumps, loads, JSONEncoder
+from typing import Any, Dict, List
 from dataclasses_json import DataClassJsonMixin
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.schema import Column
@@ -39,6 +39,12 @@ class Post(Base):
         return dumps(data)
 
 
-class PostSchema(SQLAlchemyAutoSchema):
-    class Meta:
-        model = Post
+class PostEncoder(JSONEncoder):
+    def default(self, obj: Any) -> Dict[str, str]:
+        if isinstance(obj, Post):
+            return {
+                "id": str(obj.id),
+                "text": obj.text,
+            }
+        else:
+            return JSONEncoder.default(self, obj)

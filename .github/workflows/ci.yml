@@ -29,10 +29,6 @@ jobs:
         run: pipenv sync --dev
         working-directory: ./backend
 
-      - name: Type Check
-        run: pipenv run type
-        working-directory: ./backend
-
       - name: Unit Test
         run: pipenv run test
         working-directory: ./backend
