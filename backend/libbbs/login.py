@@ -8,6 +8,14 @@ from libbbs.response import Response
 
 @dataclass
 class Login(Middleware):
+    r"""Middleware to check if a request has a valid session.
+
+    Args:
+        exclude_path: URIs which do not need to check a session.
+        realm: This path and child paths need check.
+        credential_key: Key of session to use login validation.
+    """
+
     exclude_path: List[str]
     realm: str = "/"
     credential_key: str = "CREDENTIAL"

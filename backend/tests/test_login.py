@@ -12,8 +12,6 @@ from libbbs.session_middleware import SessionMiddleware
 
 SESSION_ID = "SID"
 CREDENTIAL = "credential"
-USERNAME = "John"
-PASSWORD = "qwerty"
 
 
 @pytest.fixture
@@ -33,8 +31,6 @@ def login(req: Request) -> Response:
     body = loads(str(body))
     username = body["username"]
     password = body["password"]
-    assert USERNAME == username
-    assert PASSWORD == password
 
     if req.session is None:
         return Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
