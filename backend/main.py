@@ -1,7 +1,7 @@
 from json import dumps
 import sqlalchemy
 from libbbs.body import Body
-from libbbs.cors import Cors
+from libbbs.cors import CorsMiddleware
 from libbbs.response import Response
 from libbbs.request import Request
 from libbbs.misc import Method, StatusCode
@@ -49,7 +49,7 @@ def create_post(req: Request) -> Response:
 
 def main():
     server = Server()
-    server.use(Cors(allow_origin="http://localhost:3000"))
+    server.use(CorsMiddleware(allow_origin="http://localhost:3000"))
     server.route("/posts", Method.GET, get_posts)
     server.route("/posts", Method.POST, create_post)
     server.run(8080)

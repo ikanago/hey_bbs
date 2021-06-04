@@ -1,18 +1,20 @@
 from __future__ import annotations
+from dataclasses import dataclass, field
 from typing import Optional
 from libbbs.body import Body
 from libbbs.header_map import CaseInsensitiveMap
 from libbbs.misc import Method
-import dataclasses
+from libbbs.session import Session, extract_session_id_inner
 
 
-@dataclasses.dataclass
+@dataclass
 class Request:
     method: Method = Method.GET
     uri: str = "/"
     version: bytes = b"HTTP/1.1"
-    __headers: CaseInsensitiveMap = dataclasses.field(init=False)
-    body: Optional[Body] = dataclasses.field(default=None)
+    __headers: CaseInsensitiveMap = field(init=False)
+    body: Optional[Body] = field(default=None)
+    session: Optional[Session] = field(default=None, init=False)
 
     def __post_init__(self):
         self.__headers = CaseInsensitiveMap()
@@ -57,3 +59,6 @@ class Request:
                 return int(value)
         except (KeyError, ValueError):
             return None
+
+    def extract_session_id(self, session_id: str) -> Optional[str]:
+        return extract_session_id_inner(self.get("Cookie"), session_id)

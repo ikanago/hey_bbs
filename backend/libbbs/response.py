@@ -3,6 +3,7 @@ from libbbs.body import Body
 from typing import Optional
 from libbbs.header_map import CaseInsensitiveMap
 from libbbs.misc import StatusCode, Mime
+from libbbs.session import extract_session_id_inner
 import dataclasses
 import socket
 
@@ -63,6 +64,9 @@ class Response:
 
     def is_failure(self) -> bool:
         return self.status_code.is_failure()
+
+    def extract_session_id(self, session_id: str) -> Optional[str]:
+        return extract_session_id_inner(self.get("Set-Cookie"), session_id)
 
     def set_body(self, to_body: Body, mime_type: Optional[str] = None):
         self.body = to_body
