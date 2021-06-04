@@ -1,8 +1,7 @@
 from dataclasses import dataclass, field
-from libbbs.cookie import CookieData
-from libbbs.response import Response
 from libbbs.middleware import Middleware, Next
 from libbbs.request import Request
+from libbbs.response import Response
 from libbbs.session import Session, SessionStore
 
 
@@ -18,13 +17,13 @@ class SessionMiddleware(Middleware):
         session_id = req.extract_session_id(self.session_id)
         if session_id is None:
             session = Session()
-            self.__store.set(session.id, session)
+            self.__store.set(session)
             req.session = session
         else:
             session = self.__store.get(session_id)
             if session is None:
                 session = Session()
-                self.__store.set(session.id, session)
+                self.__store.set(session)
                 req.session = session
             else:
                 # The request has cookie and it contains valid session ID.
@@ -35,4 +34,5 @@ class SessionMiddleware(Middleware):
         if req.session is not None and req.session.has_changed:
             cookie = f"{self.session_id}={req.session.id}"
             res.set("Set-Cookie", cookie)
+            self.__store.set(req.session)
         return res

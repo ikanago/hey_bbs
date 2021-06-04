@@ -47,6 +47,5 @@ class SessionStore:
     def get(self, id: str) -> Optional[Session]:
         return self.__map.get(id)
 
-    def set(self, id: str, session: Session):
-        self.__map[id] = session
-
+    def set(self, session: Session):
+        self.__map[session.id] = session
