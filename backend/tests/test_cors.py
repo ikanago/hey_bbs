@@ -4,7 +4,7 @@ from libbbs.request import Request
 from libbbs.misc import Method
 from libbbs.server import Server
 import pytest
-from libbbs.cors import Cors
+from libbbs.cors import CorsMiddleware
 
 
 def hello(_: Request) -> Response:
@@ -17,7 +17,7 @@ def hello(_: Request) -> Response:
 def server_any_origin() -> Server:
     server = Server()
     server.route("/", Method.GET, hello)
-    server.use(Cors())
+    server.use(CorsMiddleware())
     return server
 
 
@@ -28,7 +28,7 @@ ALLOW_ORIGIN: str = "localhost:3000"
 def server_specific_origin() -> Server:
     server = Server()
     server.route("/", Method.GET, hello)
-    server.use(Cors(allow_origin=ALLOW_ORIGIN))
+    server.use(CorsMiddleware(allow_origin=ALLOW_ORIGIN))
     return server
 
 

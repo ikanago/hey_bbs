@@ -36,11 +36,11 @@ class StatusCode(Enum):
         if self == StatusCode.OK:
             return b"OK"
         elif self == StatusCode.MovedPermanently:
-            return "Moved Permanently"
+            return b"Moved Permanently"
         elif self == StatusCode.Found:
-            return "Found"
+            return b"Found"
         elif self == StatusCode.SeeOther:
-            return "See Other"
+            return b"See Other"
         elif self == StatusCode.BAD_REQUEST:
             return b"Bad Request"
         elif self == StatusCode.UNAUTHORIZED:

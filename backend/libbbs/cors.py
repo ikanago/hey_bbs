@@ -6,7 +6,7 @@ from libbbs.request import Request
 
 
 @dataclass
-class Cors(Middleware):
+class CorsMiddleware(Middleware):
     r""" This middleware handles a CORS request.
     """
 

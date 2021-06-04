@@ -16,10 +16,6 @@ class Server:
     router: Router = field(default_factory=Router)
     middlewares: List[Middleware] = field(default_factory=list)
 
-    # def __post_init__(self, router: Router = Router(), middlewares: List[Middleware] = []) -> None:
-    #     self.router = router
-    #     self.middlewares = middlewares
-
     def use(self, middleware: Middleware):
         self.middlewares.append(middleware)
 
