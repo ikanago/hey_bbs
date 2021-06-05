@@ -1,16 +1,18 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { baseUrl } from "../config";
+import { baseUrl, endpoint } from "../const";
+import { AuthContext } from "../context/context";
 
 const Signup: React.FC = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [hasSignupFailed, setHasSignupFailed] = useState(false);
+    // 未ログインと登録失敗を区別できていない
+    const { state, dispatch } = useContext(AuthContext);
     let history = useHistory();
 
     const submit = async () => {
         try {
-            const res = await fetch(`${baseUrl}/signup`, {
+            const res = await fetch(`${baseUrl}/${endpoint.signup}`, {
                 method: "POST",
                 mode: "cors",
                 headers: {
@@ -25,8 +27,9 @@ const Signup: React.FC = () => {
                 throw new Error();
             }
             history.push("/posts");
+            dispatch({ username: username });
         } catch (e) {
-            setHasSignupFailed(true);
+            dispatch(undefined);
         }
     };
 
@@ -50,7 +53,7 @@ const Signup: React.FC = () => {
             >
                 Sign up
             </button>
-            {hasSignupFailed ? <p>Sign up failed.</p> : <></>}
+            {state.userInfo === undefined ? <p>Sign up failed.</p> : <></>}
         </form>
     );
 };

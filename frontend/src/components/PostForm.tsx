@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { baseUrl } from "../config";
+import { baseUrl } from "../const";
 import TimeLine from "./TimeLine";
 
 export type Post = {
@@ -61,6 +61,7 @@ const PostForm: React.FC = () => {
 
     return (
         <>
+            <div></div>
             <TimeLine posts={posts} />
             <input
                 onChange={event => setText(event.target.value)}

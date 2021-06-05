@@ -30,6 +30,12 @@ SessionClass = sessionmaker(engine)
 session = SessionClass()
 
 
+def verify_login(req: Request) -> Response:
+    if req.session is None:
+        return Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
+    return Response()
+
+
 def signup(req: Request) -> Response:
     body = req.body
     if body is None:
@@ -89,7 +95,8 @@ def main():
     server = Server()
     # server.use(CorsMiddleware(allow_origin="http://localhost:3000", allow_credentials="true"))
     server.use(SessionMiddleware(SESSION_ID))
-    server.use(LoginMiddleware(["/signup", "/login"], credential_key=CREDENTIAL))
+    server.use(LoginMiddleware(["/verify_login", "/signup", "/login"], credential_key=CREDENTIAL))
+    server.route("/verify_login", Method.GET, verify_login)
     server.route("/signup", Method.POST, signup)
     # server.route("login", Method.POST, )
     server.route("/posts", Method.GET, get_posts)
