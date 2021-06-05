@@ -15,6 +15,7 @@ from sqlalchemy.orm import sessionmaker
 
 SESSION_ID = "SID"
 CREDENTIAL = "credential"
+USERNAME = "username"
 
 
 engine = create_engine(
@@ -32,8 +33,17 @@ session = SessionClass()
 
 def verify_login(req: Request) -> Response:
     if req.session is None:
+        print("Session is not set")
         return Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
-    return Response()
+    username = req.session.get(USERNAME)
+    if username is None:
+        return Response(status_code=StatusCode.UNAUTHORIZED)
+    json = dumps({
+        "username": username
+    })
+    res = Response()
+    res.body = Body.from_str(json)
+    return res
 
 
 def signup(req: Request) -> Response:
@@ -51,6 +61,7 @@ def signup(req: Request) -> Response:
     if req.session is None:
         return Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
     req.session.set(CREDENTIAL, f"{user.username}:{user.password}")
+    req.session.set(USERNAME, user.username)
     return see_other("/posts")
 
 

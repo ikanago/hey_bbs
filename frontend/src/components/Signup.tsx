@@ -6,8 +6,9 @@ import { AuthContext } from "../context/context";
 const Signup: React.FC = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    // 未ログインと登録失敗を区別できていない
-    const { state, dispatch } = useContext(AuthContext);
+    const [signUpError, setSignUpError] =
+        useState<string | undefined>(undefined);
+    const { dispatch } = useContext(AuthContext);
     let history = useHistory();
 
     const submit = async () => {
@@ -26,10 +27,19 @@ const Signup: React.FC = () => {
             if (res.status >= 400) {
                 throw new Error();
             }
+            dispatch({
+                type: "authenticate",
+                nextState: {
+                    user: {
+                        username: username,
+                    },
+                },
+            });
             history.push("/posts");
-            dispatch({ username: username });
         } catch (e) {
-            dispatch(undefined);
+            setSignUpError(
+                "そのユーザ名はすでに使用されています．別のユーザ名をお試しください．"
+            );
         }
     };
 
@@ -53,7 +63,7 @@ const Signup: React.FC = () => {
             >
                 Sign up
             </button>
-            {state.userInfo === undefined ? <p>Sign up failed.</p> : <></>}
+            {signUpError ? <p>{signUpError}</p> : <></>}
         </form>
     );
 };

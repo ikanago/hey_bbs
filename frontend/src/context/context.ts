@@ -1,42 +1,41 @@
 import React, { createContext } from "react";
 
-type UserInfo = {
+type User = {
     username: string;
 };
 
 type State = {
-    userInfo?: UserInfo;
+    user?: User;
 };
-
-type Dispatch = (user?: UserInfo) => void;
 
 type Context = {
     state: State;
-    dispatch: Dispatch;
+    dispatch: React.Dispatch<Action>;
 };
 
-type AuthAction = {
-    type: "login";
-    payload: UserInfo;
+type Action = {
+    type: "authenticate";
+    nextState: State;
 };
 
 const defaultContext: Context = {
-    state: { userInfo: undefined },
+    state: { user: undefined },
     dispatch: () => {},
 };
 
-// const authReducer: React.Reducer<AuthContext, AuthAction> = (state: AuthContext, action: AuthAction) => {
-//     switch (action.type) {
-//         case "login":
-//             if (state.userInfo === undefined) {
-//                 state.userInfo = action.payload;
-//             }
-//             return state;
-//         default:
-//             return state;
-//     }
-// };
+const authReducer: React.Reducer<State, Action> = (
+    state: State,
+    action: Action
+) => {
+    switch (action.type) {
+        case "authenticate":
+            return action.nextState;
+        default:
+            return state;
+    }
+};
 
 const AuthContext = createContext(defaultContext);
-export { AuthContext, defaultContext };
-export type { Context as AuthState, UserInfo };
+
+export { AuthContext, authReducer, defaultContext };
+export type { Context, User };

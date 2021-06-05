@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { AuthContext } from "./context";
-import type { UserInfo } from "./context";
+import { authReducer } from "./context";
 import { baseUrl, endpoint } from "../const";
 
 type Props = {
@@ -8,33 +8,27 @@ type Props = {
 };
 
 const AuthProvider: React.FC = (props: Props) => {
-    const [user, setUser] = useState<UserInfo | undefined>(undefined);
+    const [state, dispatch] = useReducer(authReducer, { user: undefined });
 
     useEffect(() => {
         (async () => {
-            try {
-                const res = await fetch(`${baseUrl}/${endpoint.verifyLogin}`, {
-                    method: "GET",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
-                if (!res.ok) {
-                    throw new Error();
-                }
-                const json = await res.json();
-                setUser(json);
-            } catch (e) {
-                setUser(undefined);
+            const res = await fetch(`${baseUrl}/${endpoint.verifyLogin}`, {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!res.ok) {
+                return;
             }
+            const json = await res.json();
+            dispatch({ type: "authenticate", nextState: json });
         })();
     }, []);
 
     return (
-        <AuthContext.Provider
-            value={{ state: { userInfo: user }, dispatch: setUser }}
-        >
+        <AuthContext.Provider value={{ state, dispatch }}>
             {props.children}
         </AuthContext.Provider>
     );

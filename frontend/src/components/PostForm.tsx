@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { baseUrl } from "../const";
+import { AuthContext } from "../context/context";
 import TimeLine from "./TimeLine";
 
 export type Post = {
@@ -10,6 +11,7 @@ export type Post = {
 const PostForm: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [text, setText] = useState("");
+    const { state } = useContext(AuthContext);
     const url = `${baseUrl}/posts`;
 
     useEffect(() => {
@@ -61,7 +63,7 @@ const PostForm: React.FC = () => {
 
     return (
         <>
-            <div></div>
+            <div>{state.user?.username}</div>
             <TimeLine posts={posts} />
             <input
                 onChange={event => setText(event.target.value)}
