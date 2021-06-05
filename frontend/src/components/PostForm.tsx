@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { baseUrl } from "../config";
 import TimeLine from "./TimeLine";
 
 export type Post = {
@@ -9,7 +10,7 @@ export type Post = {
 const PostForm: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [text, setText] = useState("");
-    const url = "http://localhost:3000/posts";
+    const url = `${baseUrl}/posts`;
 
     useEffect(() => {
         (async () => {

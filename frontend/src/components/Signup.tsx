@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
+import { baseUrl } from "../config";
 
 const Signup: React.FC = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [hasSignupFailed, setHasSignupFailed] = useState(false);
     let history = useHistory();
 
-    const url = "http://localhost:3000/signup";
     const submit = async () => {
         try {
-            const res = await fetch(url, {
+            const res = await fetch(`${baseUrl}/signup`, {
                 method: "POST",
                 mode: "cors",
                 headers: {
@@ -21,11 +22,11 @@ const Signup: React.FC = () => {
                 }),
             });
             if (res.status >= 400) {
-                throw new Error(`HTTP error: ${res.status}`);
+                throw new Error();
             }
             history.push("/posts");
         } catch (e) {
-            console.error(e);
+            setHasSignupFailed(true);
         }
     };
 
@@ -49,6 +50,7 @@ const Signup: React.FC = () => {
             >
                 Sign up
             </button>
+            {hasSignupFailed ? <p>Sign up failed.</p> : <></>}
         </form>
     );
 };

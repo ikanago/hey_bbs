@@ -35,7 +35,7 @@ class User(Base):
     __tablename__ = "user"
     user_id = Column(Integer, primary_key=True, autoincrement=True,
                 nullable=False, unique=True)
-    username = Column(String(255), nullable=False)
+    username = Column(String(255), nullable=False, unique=True)
     password = Column(String(256), nullable=False)
 
     def from_json(json: str) -> User:

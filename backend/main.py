@@ -35,7 +35,25 @@ def signup(req: Request) -> Response:
     if body is None:
         return Response(status_code=StatusCode.UNAUTHORIZED)
     user = User.from_json(str(req.body))
+    already_exist_users = session.query(User).filter(User.username == user.username).all()
+    print(already_exist_users)
+    if len(already_exist_users) != 0:
+        return Response(status_code=StatusCode.BAD_REQUEST)
     session.add(user)
+    session.commit()
+
+    if req.session is None:
+        return Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
+    req.session.set(CREDENTIAL, f"{user.username}:{user.password}")
+    return see_other("/posts")
+
+
+def login(req: Request) -> Response:
+    body = req.body
+    if body is None:
+        return Response(status_code=StatusCode.UNAUTHORIZED)
+    user = User.from_json(str(req.body))
+    user_in_db = session.query(User).filter(User.username == user.username).first()
     session.commit()
 
     if req.session is None:
