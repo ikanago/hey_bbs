@@ -60,7 +60,7 @@ def signup(req: Request) -> Response:
 
     if req.session is None:
         return Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
-    req.session.set(CREDENTIAL, f"{user.username}:{user.password}")
+    req.session.set(CREDENTIAL, user.credential())
     req.session.set(USERNAME, user.username)
     return see_other("/posts")
 
@@ -70,12 +70,18 @@ def login(req: Request) -> Response:
     if body is None:
         return Response(status_code=StatusCode.UNAUTHORIZED)
     user = User.from_json(str(req.body))
-    user_in_db = session.query(User).filter(User.username == user.username).first()
-    session.commit()
+    try:
+        user_in_db = session.query(User).filter(User.username == user.username).one()
+        if user.username != user_in_db.username or user.password != user_in_db.password:
+            raise Exception
+    except Exception:
+        return Response(status_code=StatusCode.BAD_REQUEST)
+    finally:
+        session.commit()
 
     if req.session is None:
         return Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
-    req.session.set(CREDENTIAL, f"{user.username}:{user.password}")
+    req.session.set(CREDENTIAL, user.credential())
     return see_other("/posts")
 
 
@@ -109,7 +115,7 @@ def main():
     server.use(LoginMiddleware(["/verify_login", "/signup", "/login"], credential_key=CREDENTIAL))
     server.route("/verify_login", Method.GET, verify_login)
     server.route("/signup", Method.POST, signup)
-    # server.route("login", Method.POST, )
+    server.route("/login", Method.POST, login)
     server.route("/posts", Method.GET, get_posts)
     server.route("/posts", Method.POST, create_post)
     server.run(8080)

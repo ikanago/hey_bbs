@@ -1,19 +1,18 @@
 import React, { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { baseUrl, endpoint } from "../const";
+import { baseUrl } from "../const";
 import { AuthContext } from "../context/context";
 
-const Signup: React.FC = () => {
+const Login: React.FC = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [signUpError, setSignUpError] =
-        useState<string | undefined>(undefined);
+    const [logInError, setLogInError] = useState<string | undefined>(undefined);
     const { dispatch } = useContext(AuthContext);
     let history = useHistory();
 
     const submit = async () => {
         try {
-            const res = await fetch(`${baseUrl}/${endpoint.signup}`, {
+            const res = await fetch(`${baseUrl}/login`, {
                 method: "POST",
                 mode: "cors",
                 headers: {
@@ -37,8 +36,8 @@ const Signup: React.FC = () => {
             });
             history.push("/posts");
         } catch (e) {
-            setSignUpError(
-                "そのユーザ名はすでに使用されています．別のユーザ名をお試しください．"
+            setLogInError(
+                "ユーザ名かパスワードが間違っています．もう一度お試しください．"
             );
         }
     };
@@ -61,11 +60,11 @@ const Signup: React.FC = () => {
                     submit();
                 }}
             >
-                Sign up
+                Log in
             </button>
-            {signUpError ? <p>{signUpError}</p> : <></>}
+            {logInError ? <p>{logInError}</p> : <></>}
         </form>
     );
 };
 
-export default Signup;
+export default Login;

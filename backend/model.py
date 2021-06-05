@@ -42,6 +42,9 @@ class User(Base):
         data = loads(json)
         return User(username=data["username"], password=data["password"])
 
+    def credential(self) -> str:
+        return f"{self.username}:{self.password}"
+
 
 class UserEncoder(JSONEncoder):
     def default(self, obj: Any) -> Dict[str, str]:

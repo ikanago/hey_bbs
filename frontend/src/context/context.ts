@@ -18,11 +18,6 @@ type Action = {
     nextState: State;
 };
 
-const defaultContext: Context = {
-    state: { user: undefined },
-    dispatch: () => {},
-};
-
 const authReducer: React.Reducer<State, Action> = (
     state: State,
     action: Action
@@ -35,7 +30,12 @@ const authReducer: React.Reducer<State, Action> = (
     }
 };
 
+const defaultContext: Context = {
+    state: { user: undefined },
+    dispatch: () => {},
+};
+
 const AuthContext = createContext(defaultContext);
 
-export { AuthContext, authReducer, defaultContext };
+export { AuthContext, authReducer };
 export type { Context, User };
