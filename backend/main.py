@@ -2,13 +2,19 @@ from json import dumps
 import sqlalchemy
 from libbbs.body import Body
 from libbbs.cors import CorsMiddleware
-from libbbs.response import Response
+from libbbs.login import LoginMiddleware
+from libbbs.response import Response, see_other
 from libbbs.request import Request
 from libbbs.misc import Method, StatusCode
 from libbbs.server import Server
-from model import Base, Post, PostEncoder
+from libbbs.session_middleware import SessionMiddleware
+from model import Base, Post, PostEncoder, User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
+
+SESSION_ID = "SID"
+CREDENTIAL = "credential"
 
 
 engine = create_engine(
@@ -22,6 +28,20 @@ while True:
     break
 SessionClass = sessionmaker(engine)
 session = SessionClass()
+
+
+def signup(req: Request) -> Response:
+    body = req.body
+    if body is None:
+        return Response(status_code=StatusCode.UNAUTHORIZED)
+    user = User.from_json(str(req.body))
+    session.add(user)
+    session.commit()
+
+    if req.session is None:
+        return Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
+    req.session.set(CREDENTIAL, f"{user.username}:{user.password}")
+    return see_other("/posts")
 
 
 def get_posts_inner() -> Response:
@@ -49,7 +69,11 @@ def create_post(req: Request) -> Response:
 
 def main():
     server = Server()
-    server.use(CorsMiddleware(allow_origin="http://localhost:3000"))
+    server.use(CorsMiddleware(allow_origin="http://localhost:3000", allow_credentials="true"))
+    server.use(SessionMiddleware(SESSION_ID))
+    server.use(LoginMiddleware(["/signup", "/login"], credential_key=CREDENTIAL))
+    server.route("/signup", Method.POST, signup)
+    # server.route("login", Method.POST, )
     server.route("/posts", Method.GET, get_posts)
     server.route("/posts", Method.POST, create_post)
     server.run(8080)

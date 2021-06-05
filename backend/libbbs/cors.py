@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Literal
 from libbbs.misc import Method, StatusCode
 from libbbs.response import Response
 from libbbs.middleware import Middleware, Next
@@ -13,6 +14,7 @@ class CorsMiddleware(Middleware):
     allow_origin: str = "*"
     allow_methods: str = "POST, GET, OPTIONS"
     allow_headers: str = "*"
+    allow_credentials: Literal["true", "false"] = "false"
     max_age: str = "86400"
 
     def _is_valid_origin(self, origin: str) -> bool:
@@ -26,6 +28,7 @@ class CorsMiddleware(Middleware):
         res.set("Access-Control-Allow-Origin", self.allow_origin)
         res.set("Access-Control-Allow-Methods", self.allow_methods)
         res.set("Access-Control-Allow-Headers", self.allow_headers)
+        res.set("Access-Control-Allow-Credentials", self.allow_credentials)
         res.set("Access-Control-Allow-Max-Age", self.max_age)
         return res
 
@@ -42,4 +45,5 @@ class CorsMiddleware(Middleware):
 
         res = next.run(req)
         res.set("Access-Control-Allow-Origin", self.allow_origin)
+        res.set("Access-Control-Allow-Credentials", self.allow_credentials)
         return res

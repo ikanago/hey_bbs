@@ -9,13 +9,16 @@ export type Post = {
 const PostForm: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [text, setText] = useState("");
+    const url = "http://localhost:8080/posts";
 
     useEffect(() => {
         (async () => {
+            console.log("posts");
             try {
                 const res = await fetch(url, {
                     method: "GET",
                     mode: "cors",
+                    credentials: "include",
                 });
                 if (res.status >= 400) {
                     throw new Error(`HTTP error: ${res.status}`);
@@ -29,12 +32,12 @@ const PostForm: React.FC = () => {
         })();
     }, []);
 
-    const url = "http://localhost:8080/posts";
     const createPost = async () => {
         try {
             const res = await fetch(url, {
                 method: "POST",
                 mode: "cors",
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
                 },

@@ -1,14 +1,18 @@
 import React from "react";
-import logo from "./logo.svg";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 import "./App.css";
 import PostForm from "./components/PostForm";
+import Signup from "./components/Signup";
 
-function App() {
+const App: React.FC = () => {
     return (
-        <div className="App">
-            <PostForm />
-        </div>
+        <BrowserRouter>
+            <Switch>
+                <Route path="/posts" children={<PostForm />} />
+                <Route path="/signup" children={<Signup />} />
+            </Switch>
+        </BrowserRouter>
     );
-}
+};
 
 export default App;

@@ -7,7 +7,7 @@ from libbbs.response import Response
 
 
 @dataclass
-class Login(Middleware):
+class LoginMiddleware(Middleware):
     r"""Middleware to check if a request has a valid session.
 
     Args:
@@ -23,9 +23,8 @@ class Login(Middleware):
     def call(self, req: Request, next: Next) -> Response:
         if not req.uri.startswith(self.realm):
             return next.run(req)
-        for path in self.exclude_path:
-            if req.uri == path:
-                return next.run(req)
+        if req.uri in self.exclude_path:
+            return next.run(req)
 
         # All requests to `req.uri` need login credentials.
         session = req.session

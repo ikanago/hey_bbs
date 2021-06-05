@@ -1,7 +1,7 @@
 import pytest
 from json import loads
 from libbbs.body import Body
-from libbbs.login import Login
+from libbbs.login import LoginMiddleware
 from libbbs.middleware import Middleware, Next
 from libbbs.misc import Method, StatusCode
 from libbbs.request import Request
@@ -18,7 +18,7 @@ CREDENTIAL = "credential"
 def login_server() -> Server:
     server = Server()
     server.use(SessionMiddleware(SESSION_ID))
-    server.use(Login(["/login"], "/", CREDENTIAL))
+    server.use(LoginMiddleware(["/login"], "/", CREDENTIAL))
     server.route("/hello", Method.GET, hello)
     server.route("/login", Method.POST, login)
     return server
