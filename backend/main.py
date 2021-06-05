@@ -45,7 +45,7 @@ def signup(req: Request) -> Response:
 
 
 def get_posts_inner() -> Response:
-    posts = session.query(Post).order_by(Post.id.desc()).limit(5).all()
+    posts = session.query(Post).order_by(Post.post_id.desc()).limit(5).all()
     res = Response()
     body = dumps(posts, cls=PostEncoder)
     res.set_body(Body.from_str(body))
@@ -69,7 +69,7 @@ def create_post(req: Request) -> Response:
 
 def main():
     server = Server()
-    server.use(CorsMiddleware(allow_origin="http://localhost:3000", allow_credentials="true"))
+    # server.use(CorsMiddleware(allow_origin="http://localhost:3000", allow_credentials="true"))
     server.use(SessionMiddleware(SESSION_ID))
     server.use(LoginMiddleware(["/signup", "/login"], credential_key=CREDENTIAL))
     server.route("/signup", Method.POST, signup)

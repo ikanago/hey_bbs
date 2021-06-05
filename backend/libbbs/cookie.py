@@ -30,6 +30,7 @@ class CookieData:
     def _parse_cookie_value(self, cookie_value: str) -> None:
         cookie_pairs = cookie_value.split(";")
         for pair in cookie_pairs:
+            pair = pair.strip()
             pair = pair.split("=")
             if len(pair) == 2:
                 self.__cookies.set(pair[0], pair[1])

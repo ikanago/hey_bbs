@@ -6,7 +6,7 @@ const Signup: React.FC = () => {
     const [password, setPassword] = useState("");
     let history = useHistory();
 
-    const url = "http://localhost:8080/signup";
+    const url = "http://localhost:3000/signup";
     const submit = async () => {
         try {
             const res = await fetch(url, {

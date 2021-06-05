@@ -27,12 +27,11 @@ class LoginMiddleware(Middleware):
             return next.run(req)
 
         # All requests to `req.uri` need login credentials.
-        session = req.session
-        if session is None:
+        if req.session is None:
             print("SessionMiddleware is necessary to maintain login.")
             return Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
 
-        credential = session.get(self.credential_key)
+        credential = req.session.get(self.credential_key)
         if credential is None:
             return Response(status_code=StatusCode.UNAUTHORIZED)
 

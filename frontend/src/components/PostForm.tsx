@@ -9,7 +9,7 @@ export type Post = {
 const PostForm: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [text, setText] = useState("");
-    const url = "http://localhost:8080/posts";
+    const url = "http://localhost:3000/posts";
 
     useEffect(() => {
         (async () => {
@@ -53,6 +53,8 @@ const PostForm: React.FC = () => {
         } catch (e) {
             console.error(e);
             setPosts([]);
+        } finally {
+            setText("");
         }
     };
 
