@@ -19,8 +19,8 @@ def login_server() -> Server:
     server = Server()
     server.use(SessionMiddleware(SESSION_ID))
     server.use(LoginMiddleware(["/login"], "/", CREDENTIAL))
-    server.route("/hello", Method.GET, hello)
-    server.route("/login", Method.POST, login)
+    server.add_route("/hello", Method.GET, hello)
+    server.add_route("/login", Method.POST, login)
     return server
 
 

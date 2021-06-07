@@ -51,7 +51,8 @@ def signup(req: Request) -> Response:
     if body is None:
         return Response(status_code=StatusCode.UNAUTHORIZED)
     user = User.from_json(str(req.body))
-    already_exist_users = session.query(User).filter(User.username == user.username).all()
+    already_exist_users = session.query(User).filter(
+        User.username == user.username).all()
     print(already_exist_users)
     if len(already_exist_users) != 0:
         return Response(status_code=StatusCode.BAD_REQUEST)
@@ -71,7 +72,8 @@ def login(req: Request) -> Response:
         return Response(status_code=StatusCode.UNAUTHORIZED)
     user = User.from_json(str(req.body))
     try:
-        user_in_db = session.query(User).filter(User.username == user.username).one()
+        user_in_db = session.query(User).filter(
+            User.username == user.username).one()
         if user.username != user_in_db.username or user.password != user_in_db.password:
             raise Exception
     except Exception:
@@ -112,7 +114,8 @@ def main():
     server = Server()
     # server.use(CorsMiddleware(allow_origin="http://localhost:3000", allow_credentials="true"))
     server.use(SessionMiddleware(SESSION_ID))
-    server.use(LoginMiddleware(["/verify_login", "/signup", "/login"], credential_key=CREDENTIAL))
+    server.use(LoginMiddleware(
+        ["/verify_login", "/signup", "/login"], credential_key=CREDENTIAL))
     server.route("/verify_login", Method.GET, verify_login)
     server.route("/signup", Method.POST, signup)
     server.route("/login", Method.POST, login)

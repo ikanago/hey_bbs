@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import Callable, List, Optional
+from functools import wraps
 from libbbs.router import Handler, Router
 from libbbs.misc import InternalServerError, Method, StatusCode
 from libbbs.middleware import Middleware, Next
@@ -19,7 +20,12 @@ class Server:
     def use(self, middleware: Middleware):
         self.middlewares.append(middleware)
 
-    def route(self, uri: str, method: Method, handler: Handler):
+    def route(self, uri: str, method: Method = Method.GET) -> Callable[[Handler], None]:
+        def wrapper(handler: Handler):
+            self.router.route(uri, method, handler)
+        return wrapper
+
+    def add_route(self, uri: str, method: Method, handler: Handler):
         self.router.route(uri, method, handler)
 
     def run(self, port: int) -> None:

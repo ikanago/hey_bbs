@@ -11,7 +11,7 @@ Base = declarative_base()
 class Post(Base):
     __tablename__ = "post"
     post_id = Column(Integer, primary_key=True, autoincrement=True,
-                nullable=False, unique=True)
+                     nullable=False, unique=True)
     # user_id = Column(Integer, ForeignKey("user.user_id"))
     text = Column(String(255), nullable=False)
 
@@ -34,7 +34,7 @@ class PostEncoder(JSONEncoder):
 class User(Base):
     __tablename__ = "user"
     user_id = Column(Integer, primary_key=True, autoincrement=True,
-                nullable=False, unique=True)
+                     nullable=False, unique=True)
     username = Column(String(255), nullable=False, unique=True)
     password = Column(String(256), nullable=False)
 
