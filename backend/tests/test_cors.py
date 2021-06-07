@@ -16,7 +16,7 @@ def hello(_: Request) -> Response:
 @pytest.fixture
 def server_any_origin() -> Server:
     server = Server()
-    server.route("/", Method.GET, hello)
+    server.add_route("/", Method.GET, hello)
     server.use(CorsMiddleware())
     return server
 
@@ -27,7 +27,7 @@ ALLOW_ORIGIN: str = "localhost:3000"
 @pytest.fixture
 def server_specific_origin() -> Server:
     server = Server()
-    server.route("/", Method.GET, hello)
+    server.add_route("/", Method.GET, hello)
     server.use(CorsMiddleware(allow_origin=ALLOW_ORIGIN))
     return server
 

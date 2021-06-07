@@ -1,5 +1,4 @@
 import pytest
-from libbbs.cookie import CookieData
 from libbbs.middleware import Middleware, Next
 from libbbs.misc import Method, StatusCode
 from libbbs.request import Request
@@ -18,7 +17,6 @@ class Visits(Middleware):
         visits = req.session.get(VISITS)
         if visits is None:
             visits = "0"
-        print(visits)
         req.session.set(VISITS, str(int(visits) + 1))
         return next.run(req)
 
@@ -37,7 +35,7 @@ def session_server() -> Server:
     server = Server()
     server.use(SessionMiddleware(SESSION_ID))
     server.use(Visits())
-    server.route("/", Method.GET, visit)
+    server.add_route("/", Method.GET, visit)
     return server
 
 
