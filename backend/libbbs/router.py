@@ -18,6 +18,7 @@ class Router:
         self.__routing = {}
 
     def route(self, uri: str, method: Method, handler: Handler) -> None:
+        assert uri.startswith("/")
         self.__routing[(uri, method)] = handler
 
     def dispatch(self, uri: str, method: Method) -> Handler:

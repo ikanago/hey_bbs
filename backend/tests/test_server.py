@@ -1,4 +1,3 @@
-import pytest
 from libbbs.body import Body
 from libbbs.misc import Method, StatusCode
 from libbbs.request import Request

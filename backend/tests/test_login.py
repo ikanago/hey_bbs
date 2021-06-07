@@ -2,7 +2,6 @@ import pytest
 from json import loads
 from libbbs.body import Body
 from libbbs.login import LoginMiddleware
-from libbbs.middleware import Middleware, Next
 from libbbs.misc import Method, StatusCode
 from libbbs.request import Request
 from libbbs.response import Response, see_other

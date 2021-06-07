@@ -1,5 +1,5 @@
 from __future__ import annotations
-from json import dumps, loads, JSONEncoder
+from json import loads, JSONEncoder
 from typing import Any, Dict
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.schema import Column, ForeignKey

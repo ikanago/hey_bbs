@@ -1,6 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Callable, List, Optional
-from functools import wraps
+from typing import Callable, List
 from libbbs.router import Handler, Router
 from libbbs.misc import InternalServerError, Method, StatusCode
 from libbbs.middleware import Middleware, Next

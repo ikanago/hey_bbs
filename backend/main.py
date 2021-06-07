@@ -1,7 +1,6 @@
 from json import dumps
 import sqlalchemy
 from libbbs.body import Body
-from libbbs.cors import CorsMiddleware
 from libbbs.login import LoginMiddleware
 from libbbs.response import Response, see_other
 from libbbs.request import Request
@@ -30,7 +29,10 @@ while True:
 SessionClass = sessionmaker(engine)
 session = SessionClass()
 
+server = Server()
 
+
+@server.route("/verify_login")
 def verify_login(req: Request) -> Response:
     if req.session is None:
         print("Session is not set")
@@ -46,6 +48,7 @@ def verify_login(req: Request) -> Response:
     return res
 
 
+@server.route("/signup", Method.POST)
 def signup(req: Request) -> Response:
     body = req.body
     if body is None:
@@ -66,6 +69,7 @@ def signup(req: Request) -> Response:
     return see_other("/posts")
 
 
+@server.route("/login", Method.POST)
 def login(req: Request) -> Response:
     body = req.body
     if body is None:
@@ -95,10 +99,12 @@ def get_posts_inner() -> Response:
     return res
 
 
+@server.route("/posts")
 def get_posts(_req: Request) -> Response:
     return get_posts_inner()
 
 
+@server.route("/posts", Method.POST)
 def create_post(req: Request) -> Response:
     if req.body is None:
         return Response(status_code=StatusCode.BAD_REQUEST)
@@ -111,16 +117,9 @@ def create_post(req: Request) -> Response:
 
 
 def main():
-    server = Server()
-    # server.use(CorsMiddleware(allow_origin="http://localhost:3000", allow_credentials="true"))
     server.use(SessionMiddleware(SESSION_ID))
     server.use(LoginMiddleware(
         ["/verify_login", "/signup", "/login"], credential_key=CREDENTIAL))
-    server.route("/verify_login", Method.GET, verify_login)
-    server.route("/signup", Method.POST, signup)
-    server.route("/login", Method.POST, login)
-    server.route("/posts", Method.GET, get_posts)
-    server.route("/posts", Method.POST, create_post)
     server.run(8080)
 
 

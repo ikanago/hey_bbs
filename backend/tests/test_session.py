@@ -1,5 +1,4 @@
 import pytest
-from libbbs.cookie import CookieData
 from libbbs.middleware import Middleware, Next
 from libbbs.misc import Method, StatusCode
 from libbbs.request import Request
