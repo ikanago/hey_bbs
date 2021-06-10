@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/context";
 import TimeLine from "./TimeLine";
 import { createPost, getPosts } from "../api";
+import { Box } from "@chakra-ui/layout";
 
 export type Post = {
     id: number;
@@ -39,7 +40,7 @@ const PostForm: React.FC = () => {
     };
 
     return (
-        <>
+        <Box px={40}>
             <div>{state.user?.username}</div>
             <TimeLine posts={posts} />
             <input
@@ -48,7 +49,7 @@ const PostForm: React.FC = () => {
                 type="text"
             />
             <button onClick={handleClick}>Send</button>
-        </>
+        </Box>
     );
 };
 

@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { AuthContext } from "../context/context";
-import { signup } from "../api"
+import { signup } from "../api";
 
 const Signup: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -13,7 +13,7 @@ const Signup: React.FC = () => {
 
     const submit = async () => {
         try {
-            await signup(username, password);
+            // await signup(username, password);
             dispatch({
                 type: "authenticate",
                 nextState: {
