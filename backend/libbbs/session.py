@@ -49,3 +49,6 @@ class SessionStore:
 
     def set(self, session: Session):
         self.__map[session.id] = session
+
+    def delete(self, id: str):
+        del self.__map[id]

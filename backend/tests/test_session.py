@@ -4,6 +4,7 @@ from libbbs.misc import Method, StatusCode
 from libbbs.request import Request
 from libbbs.response import Response
 from libbbs.server import Server
+from libbbs.session import Session, SessionStore
 from libbbs.session_middleware import SessionMiddleware
 
 
@@ -60,3 +61,12 @@ def test_revisit_client(session_server: Server):
     res = session_server.respond(req)
     assert StatusCode.OK == res.status_code
     assert "2" == str(res.body)
+
+
+def test_delete_key_in_session():
+    store = SessionStore()
+    session = Session()
+    id = session.id
+    store.set(session)
+    store.delete(id)
+    assert None == store.get(id)
