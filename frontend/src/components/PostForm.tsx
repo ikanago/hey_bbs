@@ -1,7 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/context";
-import TimeLine from "./TimeLine";
 import { createPost, getPosts } from "../api";
+import TimeLine from "./TimeLine";
+import Header from "./Header";
+import { HStack } from "@chakra-ui/layout";
+import { Input } from "@chakra-ui/input";
+import { Button } from "@chakra-ui/button";
 
 export type Post = {
     id: number;
@@ -40,14 +44,19 @@ const PostForm: React.FC = () => {
 
     return (
         <>
-            <div>{state.user?.username}</div>
+            <Header user={state.user} />
+            <HStack>
+                <Input
+                    placeholder="What's going on?"
+                    onChange={event => setText(event.target.value)}
+                    value={text}
+                    type="text"
+                />
+                <Button colorScheme="blue" onClick={handleClick}>
+                    Send
+                </Button>
+            </HStack>
             <TimeLine posts={posts} />
-            <input
-                onChange={event => setText(event.target.value)}
-                value={text}
-                type="text"
-            />
-            <button onClick={handleClick}>Send</button>
         </>
     );
 };

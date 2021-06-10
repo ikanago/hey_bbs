@@ -1,7 +1,12 @@
 import React, { useContext, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { AuthContext } from "../context/context";
-import { signup } from "../api"
+import { signup } from "../api";
+import { Flex, Text } from "@chakra-ui/layout";
+import { Input } from "@chakra-ui/input";
+import { Button } from "@chakra-ui/button";
+import { FormLabel } from "@chakra-ui/form-control";
+import Header from "./Header";
 
 const Signup: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -24,34 +29,50 @@ const Signup: React.FC = () => {
             });
             history.push("/posts");
         } catch (e) {
-            setSignUpError(
-                "そのユーザ名はすでに使用されています．別のユーザ名をお試しください．"
-            );
+            setSignUpError("The user name is already used. Try another one.");
         }
     };
 
     return (
-        <form>
-            <input
-                onChange={event => setUsername(event.target.value)}
-                value={username}
-                type="text"
-            />
-            <input
-                onChange={event => setPassword(event.target.value)}
-                value={password}
-                type="password"
-            />
-            <button
-                onClick={e => {
-                    e.preventDefault();
-                    submit();
-                }}
-            >
-                Sign up
-            </button>
-            {signUpError ? <p>{signUpError}</p> : <></>}
-        </form>
+        <>
+            <Header />
+            <Flex direction="column" mt="10" px="30%">
+                <form>
+                    <FormLabel>Username</FormLabel>
+                    <Input
+                        mb="4"
+                        onChange={event => setUsername(event.target.value)}
+                        value={username}
+                        type="text"
+                    />
+                    <FormLabel>Password</FormLabel>
+                    <Input
+                        mb="4"
+                        onChange={event => setPassword(event.target.value)}
+                        value={password}
+                        type="password"
+                    />
+                    {signUpError ? (
+                        <Text mb="4" px="3" color="red.500">
+                            {signUpError}
+                        </Text>
+                    ) : (
+                        <></>
+                    )}
+                    <Button
+                        colorScheme="blue"
+                        width="100%"
+                        onClick={e => {
+                            e.preventDefault();
+                            submit();
+                        }}
+                    >
+                        Sign Up
+                    </Button>
+                    <Link to="/login">Or you have an account?</Link>
+                </form>
+            </Flex>
+        </>
     );
 };
 

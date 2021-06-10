@@ -2,6 +2,11 @@ import React, { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { AuthContext } from "../context/context";
 import { login } from "../api";
+import { Flex, Text } from "@chakra-ui/layout";
+import { Input } from "@chakra-ui/input";
+import { Button } from "@chakra-ui/button";
+import { FormLabel } from "@chakra-ui/form-control";
+import Header from "./Header";
 
 const Login: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -23,34 +28,49 @@ const Login: React.FC = () => {
             });
             history.push("/posts");
         } catch (e) {
-            setLogInError(
-                "ユーザ名かパスワードが間違っています．もう一度お試しください．"
-            );
+            setLogInError("Username or password is wrong. Please try again.");
         }
     };
 
     return (
-        <form>
-            <input
-                onChange={event => setUsername(event.target.value)}
-                value={username}
-                type="text"
-            />
-            <input
-                onChange={event => setPassword(event.target.value)}
-                value={password}
-                type="password"
-            />
-            <button
-                onClick={e => {
-                    e.preventDefault();
-                    submit();
-                }}
-            >
-                Log in
-            </button>
-            {logInError ? <p>{logInError}</p> : <></>}
-        </form>
+        <>
+            <Header />
+            <Flex direction="column" mt="10" px="30%">
+                <form>
+                    <FormLabel>Username</FormLabel>
+                    <Input
+                        mb="4"
+                        onChange={event => setUsername(event.target.value)}
+                        value={username}
+                        type="text"
+                    />
+                    <FormLabel>Password</FormLabel>
+                    <Input
+                        mb="4"
+                        onChange={event => setPassword(event.target.value)}
+                        value={password}
+                        type="password"
+                    />
+                    {logInError ? (
+                        <Text mb="4" px="3" color="red.500">
+                            {logInError}
+                        </Text>
+                    ) : (
+                        <></>
+                    )}
+                    <Button
+                        colorScheme="blue"
+                        width="100%"
+                        onClick={e => {
+                            e.preventDefault();
+                            submit();
+                        }}
+                    >
+                        Log in
+                    </Button>
+                </form>
+            </Flex>
+        </>
     );
 };
 

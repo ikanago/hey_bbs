@@ -28,7 +28,7 @@ const signup = async (username: string, password: string) => {
     if (!res.ok) {
         throw new Error();
     }
-}
+};
 
 const login = async (username: string, password: string) => {
     const res = await fetch(`${baseUrl}/login`, {
@@ -44,7 +44,7 @@ const login = async (username: string, password: string) => {
     if (!res.ok) {
         throw new Error();
     }
-}
+};
 
 const getPosts = async (): Promise<any> => {
     const res = await fetch(`${baseUrl}/posts`, {
