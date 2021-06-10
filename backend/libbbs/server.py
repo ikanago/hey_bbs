@@ -64,5 +64,6 @@ class Server:
             return next.run(req)
         except InternalServerError:
             return Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
-        except Exception:
+        except Exception as e:
+            print(e)
             return Response(status_code=StatusCode.BAD_REQUEST)

@@ -6,6 +6,7 @@ import TimeLine from "./TimeLine";
 export type Post = {
     id: number;
     text: string;
+    username: string;
 };
 
 const PostForm: React.FC = () => {

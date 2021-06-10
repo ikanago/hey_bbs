@@ -12,12 +12,12 @@ class Post(Base):
     __tablename__ = "post"
     post_id = Column(Integer, primary_key=True, autoincrement=True,
                      nullable=False, unique=True)
-    # user_id = Column(Integer, ForeignKey("user.user_id"))
+    user_id = Column(Integer, ForeignKey("user.user_id"))
     text = Column(String(255), nullable=False)
 
-    def from_json(json: str) -> Post:
+    def from_json(json: str, user_id: str) -> Post:
         data = loads(json)
-        return Post(text=data["text"])
+        return Post(user_id=user_id, text=data["text"])
 
 
 class PostEncoder(JSONEncoder):

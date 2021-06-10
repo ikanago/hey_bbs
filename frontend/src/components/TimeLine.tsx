@@ -10,7 +10,7 @@ const TimeLine: React.FC<Props> = props => {
     return (
         <ul>
             {props.posts.map(post => (
-                <PostCard key={post.id} text={post.text} />
+                <PostCard key={post.id} text={post.text} username={post.username} />
             ))}
         </ul>
     );

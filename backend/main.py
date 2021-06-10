@@ -12,8 +12,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 
-SESSION_ID = "SID"
 CREDENTIAL = "credential"
+SESSION_ID = "SID"
+USER_ID = "user_id"
 USERNAME = "username"
 
 
@@ -53,10 +54,10 @@ def signup(req: Request) -> Response:
     body = req.body
     if body is None:
         return Response(status_code=StatusCode.UNAUTHORIZED)
+
     user = User.from_json(str(req.body))
     already_exist_users = session.query(User).filter(
         User.username == user.username).all()
-    print(already_exist_users)
     if len(already_exist_users) != 0:
         return Response(status_code=StatusCode.BAD_REQUEST)
     session.add(user)
@@ -65,6 +66,7 @@ def signup(req: Request) -> Response:
     if req.session is None:
         return Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
     req.session.set(CREDENTIAL, user.credential())
+    req.session.set(USER_ID, str(user.user_id))
     req.session.set(USERNAME, user.username)
     return see_other("/posts")
 
@@ -79,7 +81,9 @@ def login(req: Request) -> Response:
         user_in_db = session.query(User).filter(
             User.username == user.username).one()
         if user.username != user_in_db.username or user.password != user_in_db.password:
+            print("Invalid credential.")
             raise Exception
+        user = user_in_db
     except Exception:
         return Response(status_code=StatusCode.BAD_REQUEST)
     finally:
@@ -88,13 +92,23 @@ def login(req: Request) -> Response:
     if req.session is None:
         return Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
     req.session.set(CREDENTIAL, user.credential())
+    req.session.set(USER_ID, user.user_id)
+    req.session.set(USERNAME, user.username)
     return see_other("/posts")
 
 
 def get_posts_inner() -> Response:
-    posts = session.query(Post).order_by(Post.post_id.desc()).limit(5).all()
+    posts = session.query(Post, User).join(Post, Post.user_id == User.user_id).order_by(Post.post_id.desc()).limit(20).all()
+    print(posts)
+    posts = [
+        {
+            "post_id": post.Post.post_id,
+            "text": post.Post.text,
+            "username": post.User.username,
+        }
+        for post in posts]
+    body = dumps(posts)
     res = Response()
-    body = dumps(posts, cls=PostEncoder)
     res.set_body(Body.from_str(body))
     return res
 
@@ -109,7 +123,11 @@ def create_post(req: Request) -> Response:
     if req.body is None:
         return Response(status_code=StatusCode.BAD_REQUEST)
 
-    post = Post.from_json(str(req.body))
+    if req.session is None:
+        return Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
+
+    print(req.session)
+    post = Post.from_json(str(req.body), req.session.get(USER_ID))
     session.add(post)
     session.commit()
 

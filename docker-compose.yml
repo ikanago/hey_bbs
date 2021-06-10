@@ -9,6 +9,8 @@ services:
       - '3000:3000'
     networks:
       - backnet
+    depends_on:
+      - db
 
   backend:
     build:
