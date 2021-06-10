@@ -7,7 +7,7 @@ const Posts: React.FC = () => {
         <Flex direction={"column"}>
             <PostForm></PostForm>
         </Flex>
-    )
-}
+    );
+};
 
 export default Posts;

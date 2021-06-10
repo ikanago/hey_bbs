@@ -12,7 +12,7 @@ const AuthProvider: React.FC = (props: Props) => {
 
     useEffect(() => {
         (async () => {
-            // const json = await verifyLogin();
+            const json = await verifyLogin();
             dispatch({
                 type: "authenticate",
                 nextState: { user: { username: "John" } },

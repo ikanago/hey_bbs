@@ -47,7 +47,6 @@ const login = async (username: string, password: string) => {
 };
 
 const getPosts = async (): Promise<any> => {
-    /*
     const res = await fetch(`${baseUrl}/posts`, {
         method: "GET",
         credentials: "include",
@@ -56,28 +55,9 @@ const getPosts = async (): Promise<any> => {
         throw new Error(`HTTP error: ${res.status}`);
     }
     return await res.json();
-    */
-    return [
-        {
-            id: 1,
-            text: "hogehogehogehogehogehogehogehogehogehogehogehoge",
-            username: "nya",
-        },
-        {
-            id: 1,
-            text: "hoge",
-            username: "nya",
-        },
-        {
-            id: 1,
-            text: "hoge",
-            username: "nya",
-        },
-    ];
 };
 
 const createPost = async (text: string): Promise<any> => {
-    /*
     const res = await fetch(`${baseUrl}/posts`, {
         method: "POST",
         credentials: "include",
@@ -92,24 +72,6 @@ const createPost = async (text: string): Promise<any> => {
         throw new Error(`HTTP error: ${res.status}`);
     }
     return await res.json();
-    */
-    return [
-        {
-            id: 1,
-            text: "hoge",
-            username: "nya",
-        },
-        {
-            id: 1,
-            text: "hoge",
-            username: "nya",
-        },
-        {
-            id: 1,
-            text: "hoge",
-            username: "nya",
-        },
-    ];
 };
 
 export { createPost, getPosts, login, signup, verifyLogin };

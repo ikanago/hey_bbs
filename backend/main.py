@@ -98,7 +98,8 @@ def login(req: Request) -> Response:
 
 
 def get_posts_inner() -> Response:
-    posts = session.query(Post, User).join(Post, Post.user_id == User.user_id).order_by(Post.post_id.desc()).limit(20).all()
+    posts = session.query(Post, User).join(
+        Post, Post.user_id == User.user_id).order_by(Post.post_id.desc()).limit(20).all()
     print(posts)
     posts = [
         {

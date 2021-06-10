@@ -3,7 +3,7 @@ import { AuthContext } from "../context/context";
 import { createPost, getPosts } from "../api";
 import TimeLine from "./TimeLine";
 import Header from "./Header";
-import { Box, HStack } from "@chakra-ui/layout";
+import { HStack } from "@chakra-ui/layout";
 import { Input } from "@chakra-ui/input";
 import { Button } from "@chakra-ui/button";
 

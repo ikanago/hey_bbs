@@ -18,7 +18,7 @@ const Signup: React.FC = () => {
 
     const submit = async () => {
         try {
-            // await signup(username, password);
+            await signup(username, password);
             dispatch({
                 type: "authenticate",
                 nextState: {
