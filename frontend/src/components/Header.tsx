@@ -1,13 +1,26 @@
 import { Button, ButtonGroup } from "@chakra-ui/button";
 import { Flex, Spacer, Text } from "@chakra-ui/layout";
-import React from "react";
-import { User } from "../context/context";
+import React, { useContext } from "react";
+import { AuthContext, User } from "../context/context";
+import { logout } from "../api";
+import { useHistory } from "react-router";
 
 type Props = {
     user?: User;
 };
 
 const Header: React.FC<Props> = props => {
+    const { dispatch } = useContext(AuthContext);
+    let history = useHistory();
+
+    const handleClick = async () => {
+        await logout();
+        dispatch({
+            type: "logout",
+        });
+        history.push("/login");
+    };
+
     return (
         <Flex
             align="center"
@@ -23,7 +36,9 @@ const Header: React.FC<Props> = props => {
                     <Text fontSize="28" mr="3">
                         {props.user.username}
                     </Text>
-                    <Button variant="outline">Log out</Button>
+                    <Button variant="outline" onClick={handleClick}>
+                        Log out
+                    </Button>
                 </>
             ) : (
                 <ButtonGroup spacing="3">
