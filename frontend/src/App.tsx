@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-import "./App.css";
 import AuthProvider from "./context/AuthProvider";
 import Login from "./components/Login";
 import PostForm from "./components/PostForm";
