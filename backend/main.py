@@ -38,11 +38,13 @@ def verify_login(req: Request) -> Response:
     if req.session is None:
         print("Session is not set")
         return Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
-    username = req.session.get(USERNAME)
-    if username is None:
+
+    if req.session.get(USER_ID) is None or req.session.get(USERNAME) is None:
+        print("USER_ID or USERNAME is not set")
         return Response(status_code=StatusCode.UNAUTHORIZED)
+
     json = dumps({
-        "username": username
+        "username": req.session.get(USERNAME)
     })
     res = Response()
     res.body = Body.from_str(json)
@@ -97,10 +99,26 @@ def login(req: Request) -> Response:
     return see_other("/posts")
 
 
+@server.route("/logout")
+def logout(req: Request) -> Response:
+    if req.session is None:
+        print("Session is not set")
+        return Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
+
+    if req.session.get(USER_ID) is None or req.session.get(USERNAME) is None:
+        print("USER_ID or USERNAME is not set")
+        return Response(status_code=StatusCode.UNAUTHORIZED)
+
+    req.session.delete()
+    res = see_other("/login")
+    cookie = f"{SESSION_ID}=deleted; expires=Thu, 01 Jan 1970 00:00:00 GMT"
+    res.set("Set-Cookie", cookie)
+    return res
+
+
 def get_posts_inner() -> Response:
     posts = session.query(Post, User).join(
         Post, Post.user_id == User.user_id).order_by(Post.post_id.desc()).limit(20).all()
-    print(posts)
     posts = [
         {
             "post_id": post.Post.post_id,

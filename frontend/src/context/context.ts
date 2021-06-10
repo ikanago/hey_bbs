@@ -13,10 +13,14 @@ type Context = {
     dispatch: React.Dispatch<Action>;
 };
 
-type Action = {
-    type: "authenticate";
-    nextState: State;
-};
+type Action =
+    | {
+          type: "authenticate";
+          nextState: State;
+      }
+    | {
+          type: "logout";
+      };
 
 const authReducer: React.Reducer<State, Action> = (
     state: State,
@@ -25,6 +29,8 @@ const authReducer: React.Reducer<State, Action> = (
     switch (action.type) {
         case "authenticate":
             return action.nextState;
+        case "logout":
+            return { user: undefined };
         default:
             return state;
     }

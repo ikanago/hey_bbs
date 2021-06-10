@@ -42,7 +42,9 @@ class SessionMiddleware(Middleware):
 
         res = next.run(req)
 
-        if req.session is not None and req.session.has_changed:
+        if req.session.is_deleted:
+            self.__store.delete(req.session.id)
+        elif req.session is not None and req.session.has_changed:
             cookie = f"{self.session_id}={req.session.id}"
             res.set("Set-Cookie", cookie)
             self.__store.set(req.session)

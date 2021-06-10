@@ -4,9 +4,6 @@ const verifyLogin = async () => {
     const res = await fetch(`${baseUrl}/${endpoint.verifyLogin}`, {
         method: "GET",
         credentials: "include",
-        headers: {
-            "Content-Type": "application/json",
-        },
     });
     if (!res.ok) {
         return {};
@@ -46,6 +43,13 @@ const login = async (username: string, password: string) => {
     }
 };
 
+const logout = async () => {
+    const res = await fetch(`${baseUrl}/${endpoint.logout}`, {
+        method: "GET",
+        credentials: "include",
+    });
+}
+
 const getPosts = async (): Promise<any> => {
     const res = await fetch(`${baseUrl}/posts`, {
         method: "GET",
@@ -74,4 +78,4 @@ const createPost = async (text: string): Promise<any> => {
     return await res.json();
 };
 
-export { createPost, getPosts, login, signup, verifyLogin };
+export { createPost, getPosts, login, logout, signup, verifyLogin };

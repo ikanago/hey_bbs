@@ -15,7 +15,7 @@ const AuthProvider: React.FC = (props: Props) => {
             const json = await verifyLogin();
             dispatch({
                 type: "authenticate",
-                nextState: { user: { username: "John" } },
+                nextState: { user: { username: json } },
             });
         })();
     }, []);
