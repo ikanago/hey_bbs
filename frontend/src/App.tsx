@@ -3,7 +3,6 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import AuthProvider from "./context/AuthProvider";
 import Login from "./components/Login";
 import Posts from "./components/Posts";
-import PostForm from "./components/PostForm";
 import Signup from "./components/Signup";
 import { Box, ChakraProvider, extendTheme } from "@chakra-ui/react";
 

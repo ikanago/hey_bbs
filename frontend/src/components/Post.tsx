@@ -9,7 +9,7 @@ export type Props = {
 const PostCard: React.FC<Props> = props => {
     return (
         <Box
-            m={3}
+            my={3}
             textAlign="left"
             backgroundColor="brand.800"
             borderRadius="lg"
