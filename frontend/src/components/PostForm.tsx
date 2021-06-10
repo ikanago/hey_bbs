@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
-import { baseUrl } from "../const";
 import { AuthContext } from "../context/context";
 import TimeLine from "./TimeLine";
+import { createPost, getPosts } from "../api";
 
 export type Post = {
     id: number;
@@ -13,21 +13,11 @@ const PostForm: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [text, setText] = useState("");
     const { state } = useContext(AuthContext);
-    const url = `${baseUrl}/posts`;
 
     useEffect(() => {
         (async () => {
-            console.log("posts");
             try {
-                const res = await fetch(url, {
-                    method: "GET",
-                    mode: "cors",
-                    credentials: "include",
-                });
-                if (res.status >= 400) {
-                    throw new Error(`HTTP error: ${res.status}`);
-                }
-                const json = await res.json();
+                const json = await getPosts();
                 setPosts(json);
             } catch (e) {
                 console.error(e);
@@ -36,23 +26,9 @@ const PostForm: React.FC = () => {
         })();
     }, []);
 
-    const createPost = async () => {
+    const handleClick = async () => {
         try {
-            const res = await fetch(url, {
-                method: "POST",
-                mode: "cors",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    text: text,
-                }),
-            });
-            if (res.status >= 400) {
-                throw new Error(`HTTP error: ${res.status}`);
-            }
-            const json = await res.json();
+            const json = await createPost(text);
             setPosts(json);
         } catch (e) {
             console.error(e);
@@ -71,7 +47,7 @@ const PostForm: React.FC = () => {
                 value={text}
                 type="text"
             />
-            <button onClick={createPost}>Send</button>
+            <button onClick={handleClick}>Send</button>
         </>
     );
 };

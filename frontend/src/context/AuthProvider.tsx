@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer } from "react";
 import { AuthContext } from "./context";
 import { authReducer } from "./context";
-import { baseUrl, endpoint } from "../const";
+import { verifyLogin } from "../api"
 
 type Props = {
     children?: React.ReactNode;
@@ -12,17 +12,7 @@ const AuthProvider: React.FC = (props: Props) => {
 
     useEffect(() => {
         (async () => {
-            const res = await fetch(`${baseUrl}/${endpoint.verifyLogin}`, {
-                method: "GET",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-            if (!res.ok) {
-                return;
-            }
-            const json = await res.json();
+            const json = await verifyLogin();
             dispatch({ type: "authenticate", nextState: json });
         })();
     }, []);

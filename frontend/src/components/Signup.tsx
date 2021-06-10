@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { baseUrl, endpoint } from "../const";
 import { AuthContext } from "../context/context";
+import { signup } from "../api"
 
 const Signup: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -13,20 +13,7 @@ const Signup: React.FC = () => {
 
     const submit = async () => {
         try {
-            const res = await fetch(`${baseUrl}/${endpoint.signup}`, {
-                method: "POST",
-                mode: "cors",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    username: username,
-                    password: password,
-                }),
-            });
-            if (!res.ok) {
-                throw new Error();
-            }
+            await signup(username, password);
             dispatch({
                 type: "authenticate",
                 nextState: {
