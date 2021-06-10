@@ -28,7 +28,7 @@ const App: React.FC = () => {
     return (
         <ChakraProvider theme={theme}>
             <AuthProvider>
-                <Box>
+                <Box px="20%">
                     <BrowserRouter>
                         <Switch>
                             <Route path="/posts" children={<Posts />} />

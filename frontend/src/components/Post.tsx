@@ -9,9 +9,9 @@ export type Props = {
 const PostCard: React.FC<Props> = props => {
     return (
         <Box
-            my={3}
+            mt={3}
             textAlign="left"
-            backgroundColor="brand.800"
+            bg="brand.800"
             borderRadius="lg"
         >
             <Box pl={5} fontSize="28">

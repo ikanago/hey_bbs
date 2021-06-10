@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/context";
-import TimeLine from "./TimeLine";
 import { createPost, getPosts } from "../api";
+import TimeLine from "./TimeLine";
+import Header from "./Header";
 import { Box, HStack } from "@chakra-ui/layout";
 import { Input } from "@chakra-ui/input";
 import { Button } from "@chakra-ui/button";
@@ -42,9 +43,8 @@ const PostForm: React.FC = () => {
     };
 
     return (
-        <Box px={40}>
-            <div>{state.user?.username}</div>
-            <TimeLine posts={posts} />
+        <>
+            <Header user={state.user} />
             <HStack>
                 <Input
                     placeholder="What's going on?"
@@ -56,7 +56,8 @@ const PostForm: React.FC = () => {
                     Send
                 </Button>
             </HStack>
-        </Box>
+            <TimeLine posts={posts} />
+        </>
     );
 };
 
