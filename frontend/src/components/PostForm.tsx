@@ -6,6 +6,7 @@ import Header from "./Header";
 import { HStack } from "@chakra-ui/layout";
 import { Input } from "@chakra-ui/input";
 import { Button } from "@chakra-ui/button";
+import { validatePost } from "../validate";
 
 export type Post = {
     id: number;
@@ -52,7 +53,17 @@ const PostForm: React.FC = () => {
                     value={text}
                     type="text"
                 />
-                <Button colorScheme="blue" onClick={handleClick}>
+                <Button
+                    colorScheme="blue"
+                    onClick={e => {
+                        e.preventDefault();
+                        const valid = validatePost(text);
+                        if (!valid) {
+                            return;
+                        }
+                        handleClick();
+                    }}
+                >
                     Send
                 </Button>
             </HStack>

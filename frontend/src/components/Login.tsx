@@ -7,6 +7,7 @@ import { Input } from "@chakra-ui/input";
 import { Button } from "@chakra-ui/button";
 import { FormLabel } from "@chakra-ui/form-control";
 import Header from "./Header";
+import { validateForm } from "../validate";
 
 const Login: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -63,6 +64,11 @@ const Login: React.FC = () => {
                         width="100%"
                         onClick={e => {
                             e.preventDefault();
+                            const error = validateForm(username, password);
+                            if (error) {
+                                setLogInError(error);
+                                return;
+                            }
                             submit();
                         }}
                     >
