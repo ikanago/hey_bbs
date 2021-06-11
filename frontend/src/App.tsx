@@ -1,10 +1,11 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { Box, ChakraProvider, extendTheme } from "@chakra-ui/react";
 import AuthProvider from "./context/AuthProvider";
 import Login from "./components/Login";
 import Posts from "./components/Posts";
 import Signup from "./components/Signup";
-import { Box, ChakraProvider, extendTheme } from "@chakra-ui/react";
+import PrivateRoute from "./components/PrivateRoute";
 
 const theme = extendTheme({
     styles: {
@@ -31,7 +32,9 @@ const App: React.FC = () => {
                 <Box px="20%">
                     <BrowserRouter>
                         <Switch>
-                            <Route path="/posts" children={<Posts />} />
+                            <PrivateRoute path="/posts" fallback="/login">
+                                <Posts />
+                            </PrivateRoute>
                             <Route path="/signup" children={<Signup />} />
                             <Route path="/login" children={<Login />} />
                         </Switch>
