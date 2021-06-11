@@ -11,21 +11,31 @@ Handler = Callable[[Request], Response]
 
 @dataclasses.dataclass
 class Router:
-    __routing: dict[tuple[str, Method],
-                    Handler] = dataclasses.field(init=False)
+    __exact_map: dict[tuple[str, Method],
+                      Handler] = dataclasses.field(init=False)
+    __wildcard_map: dict[tuple[str, Method],
+                         Handler] = dataclasses.field(init=False)
 
     def __post_init__(self):
-        self.__routing = {}
+        self.__exact_map = {}
+        self.__wildcard_map = {}
 
     def route(self, uri: str, method: Method, handler: Handler) -> None:
         assert uri.startswith("/")
-        self.__routing[(uri, method)] = handler
+        if uri.endswith("*"):
+            uri = uri.strip("*")
+            self.__wildcard_map[(uri, method)] = handler
+        else:
+            self.__exact_map[(uri, method)] = handler
 
     def dispatch(self, uri: str, method: Method) -> Handler:
-        try:
-            return self.__routing[(uri, method)]
-        except Exception:
-            return not_found_handler
+        handler = self.__exact_map.get((uri, method))
+        if handler is not None:
+            return handler
+        for ((wildcard_path, wildcard_method), wildcard_handler) in self.__wildcard_map.items():
+            if uri.startswith(wildcard_path) and method == wildcard_method:
+                return wildcard_handler
+        return not_found_handler
 
 
 def not_found_handler(_: Request) -> Response:

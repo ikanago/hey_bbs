@@ -16,6 +16,8 @@ CREDENTIAL = "credential"
 SESSION_ID = "SID"
 USER_ID = "user_id"
 USERNAME = "username"
+CONTENT_TYPE = "Content-Type"
+APPLICATION_JSON = "application/json"
 
 
 engine = create_engine(
@@ -47,6 +49,7 @@ def verify_login(req: Request) -> Response:
         "username": req.session.get(USERNAME)
     })
     res = Response()
+    res.set(CONTENT_TYPE, APPLICATION_JSON)
     res.body = Body.from_str(json)
     return res
 
@@ -126,9 +129,9 @@ def get_posts_inner() -> Response:
             "username": post.User.username,
         }
         for post in posts]
-    body = dumps(posts)
-    res = Response()
-    res.set_body(Body.from_str(body))
+    json = dumps(posts)
+    res = Response(body=Body.from_str(json))
+    res.set(CONTENT_TYPE, APPLICATION_JSON)
     return res
 
 
@@ -157,8 +160,9 @@ def get_threads_inner() -> Response:
     threads = session.query(Thread).order_by(
         Thread.thread_id.desc()).limit(20).all()
     json = dumps(threads, cls=ThreadEncoder)
-    return Response(body=Body.from_str(json))
-
+    res = Response(body=Body.from_str(json))
+    res.set(CONTENT_TYPE, APPLICATION_JSON)
+    return res
 
 @server.route("/threads")
 def get_threads(_req: Request) -> Response:
