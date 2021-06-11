@@ -4,5 +4,7 @@ export const endpoint = {
     verifyLogin: "/verify_login",
     signup: "/signup",
     login: "/login",
-    logout: "/logout"
+    logout: "/logout",
+    posts: "/posts",
+    threads: "/threads",
 };

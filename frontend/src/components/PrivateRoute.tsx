@@ -10,6 +10,7 @@ type Props = {
 
 const PrivateRoute: React.FC<Props> = (props: Props) => {
     const { state } = useContext(AuthContext);
+    console.log(state);
     return (
         <Route
             path={props.path}

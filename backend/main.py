@@ -7,7 +7,7 @@ from libbbs.request import Request
 from libbbs.misc import Method, StatusCode
 from libbbs.server import Server
 from libbbs.session_middleware import SessionMiddleware
-from model import Base, Post, PostEncoder, User
+from model import Base, Post, Thread, ThreadEncoder, User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -117,8 +117,8 @@ def logout(req: Request) -> Response:
 
 
 def get_posts_inner() -> Response:
-    posts = session.query(Post, User).join(
-        Post, Post.user_id == User.user_id).order_by(Post.post_id.desc()).limit(20).all()
+    posts = session.query(Post, User).filter(
+        User.user_id == Post.user_id).order_by(Post.post_id.desc()).limit(20).all()
     posts = [
         {
             "post_id": post.Post.post_id,
@@ -151,6 +151,34 @@ def create_post(req: Request) -> Response:
     session.commit()
 
     return get_posts_inner()
+
+
+def get_threads_inner() -> Response:
+    threads = session.query(Thread).order_by(
+        Thread.thread_id.desc()).limit(20).all()
+    json = dumps(threads, cls=ThreadEncoder)
+    return Response(body=Body.from_str(json))
+
+
+@server.route("/threads")
+def get_threads(_req: Request) -> Response:
+    return get_threads_inner()
+
+
+@server.route("/threads", Method.POST)
+def create_post(req: Request) -> Response:
+    body = req.body
+    if body is None:
+        return Response(status_code=StatusCode.UNAUTHORIZED)
+
+    thread = Thread.from_json(str(req.body))
+    already_exist_threads = session.query(Thread).filter(
+        Thread.thread_name == thread.thread_name).all()
+    if len(already_exist_threads) != 0:
+        return Response(status_code=StatusCode.BAD_REQUEST)
+    session.add(thread)
+    session.commit()
+    return get_threads_inner()
 
 
 def main():
