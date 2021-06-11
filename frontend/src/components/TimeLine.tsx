@@ -1,5 +1,5 @@
 import React from "react";
-import PostCard from "./Post";
+import PostCard from "./PostCard";
 import { Post } from "./PostForm";
 
 type Props = {

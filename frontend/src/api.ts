@@ -44,7 +44,7 @@ const login = async (username: string, password: string) => {
 };
 
 const logout = async () => {
-    const res = await fetch(`${baseUrl}/${endpoint.logout}`, {
+    await fetch(`${baseUrl}/${endpoint.logout}`, {
         method: "GET",
         credentials: "include",
     });
