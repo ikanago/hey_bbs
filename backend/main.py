@@ -73,7 +73,7 @@ def signup(req: Request) -> Response:
     req.session.set(CREDENTIAL, user.credential())
     req.session.set(USER_ID, str(user.user_id))
     req.session.set(USERNAME, user.username)
-    return see_other("/posts")
+    return Response()
 
 
 @server.route("/login", Method.POST)
@@ -99,7 +99,7 @@ def login(req: Request) -> Response:
     req.session.set(CREDENTIAL, user.credential())
     req.session.set(USER_ID, user.user_id)
     req.session.set(USERNAME, user.username)
-    return see_other("/posts")
+    return Response()
 
 
 @server.route("/logout")

@@ -1,4 +1,4 @@
-import { Button, ButtonGroup } from "@chakra-ui/button";
+import { Button } from "@chakra-ui/button";
 import { Flex, Spacer, Text } from "@chakra-ui/layout";
 import React, { useContext } from "react";
 import { AuthContext, User } from "../context/context";

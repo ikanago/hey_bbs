@@ -28,7 +28,7 @@ const Signup: React.FC = () => {
                     },
                 },
             });
-            history.push("/posts");
+            history.push("/threads");
         } catch (e) {
             setSignUpError("The user name is already used. Try another one.");
         }

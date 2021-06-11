@@ -18,7 +18,10 @@ const Login: React.FC = () => {
 
     const submit = async () => {
         try {
+            console.log("hoge");
             await login(username, password);
+            const to = "threads";
+            console.log(to);
             dispatch({
                 type: "authenticate",
                 nextState: {
@@ -27,7 +30,7 @@ const Login: React.FC = () => {
                     },
                 },
             });
-            history.push("/posts");
+            history.push(to);
         } catch (e) {
             setLogInError("Username or password is wrong. Please try again.");
         }

@@ -36,7 +36,7 @@ const App: React.FC = () => {
                             <PrivateRoute path="/threads" fallback="/login">
                                 <ThreadContainer />
                             </PrivateRoute>
-                            <PrivateRoute path="/posts" fallback="/login">
+                            <PrivateRoute path="/posts/:threadName" fallback="/login">
                                 <PostContainer />
                             </PrivateRoute>
                             <Route path="/signup" children={<Signup />} />

@@ -50,19 +50,19 @@ export const logout = async () => {
     });
 };
 
-export const getPosts = async (): Promise<any> => {
-    const res = await fetch(`${baseUrl}/${endpoint.posts}`, {
+export const getPosts = async (thread_name: string): Promise<any> => {
+    const res = await fetch(`${baseUrl}/${endpoint.posts}/${thread_name}`, {
         method: "GET",
         credentials: "include",
     });
-    if (res.status >= 400) {
+    if (!res.ok) {
         throw new Error(`HTTP error: ${res.status}`);
     }
     return await res.json();
 };
 
-export const createPost = async (text: string): Promise<any> => {
-    const res = await fetch(`${baseUrl}/${endpoint.posts}`, {
+export const createPost = async (text: string, threadName: string): Promise<any> => {
+    const res = await fetch(`${baseUrl}/${endpoint.posts}/${threadName}`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -72,7 +72,7 @@ export const createPost = async (text: string): Promise<any> => {
             text: text,
         }),
     });
-    if (res.status >= 400) {
+    if (!res.ok) {
         throw new Error(`HTTP error: ${res.status}`);
     }
     return await res.json();
@@ -83,7 +83,7 @@ export const getThreads = async (): Promise<any> => {
         method: "GET",
         credentials: "include",
     });
-    if (res.status >= 400) {
+    if (!res.ok) {
         throw new Error(`HTTP error: ${res.status}`);
     }
     return await res.json();
@@ -100,7 +100,7 @@ export const createThread = async (threadName: string): Promise<any> => {
             thread_name: threadName,
         }),
     });
-    if (res.status >= 400) {
+    if (!res.ok) {
         throw new Error(`HTTP error: ${res.status}`);
     }
     return await res.json();

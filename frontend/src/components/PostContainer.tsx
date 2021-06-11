@@ -5,6 +5,7 @@ import { getPosts } from "../api";
 import Header from "./Header";
 import PostForm from "./PostForm";
 import PostCard from "./PostCard";
+import { useParams } from "react-router-dom";
 
 export type Post = {
     id: number;
@@ -15,11 +16,12 @@ export type Post = {
 const PostContainer: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const { state } = useContext(AuthContext);
+    const { threadName } = useParams<{ threadName: string }>();
 
     useEffect(() => {
         (async () => {
             try {
-                const json = await getPosts();
+                const json = await getPosts(threadName);
                 setPosts(json);
             } catch (e) {
                 console.error(e);
