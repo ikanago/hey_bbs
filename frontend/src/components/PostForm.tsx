@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { createPost } from "../api";
-import { HStack } from "@chakra-ui/layout";
-import { Input } from "@chakra-ui/input";
+import { Flex, HStack } from "@chakra-ui/layout";
+import { Textarea } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/button";
 import { validatePost } from "../validate";
 import type { Post } from "./PostContainer";
@@ -13,7 +13,7 @@ type Props = {
 
 const PostForm: React.FC<Props> = props => {
     const [text, setText] = useState("");
-    const { threadName } = useParams<{ threadName: string;}>();
+    const { threadName } = useParams<{ threadName: string }>();
 
     const handleClick = async () => {
         try {
@@ -29,14 +29,16 @@ const PostForm: React.FC<Props> = props => {
     };
 
     return (
-        <HStack>
-            <Input
+        <Flex alignItems="flex-end" justifyContent="space-between">
+            <Textarea
                 placeholder="What's going on?"
                 onChange={event => setText(event.target.value)}
                 value={text}
                 type="text"
+                mr="3"
             />
             <Button
+                fontSize="20"
                 colorScheme="blue"
                 onClick={e => {
                     e.preventDefault();
@@ -49,7 +51,7 @@ const PostForm: React.FC<Props> = props => {
             >
                 Send
             </Button>
-        </HStack>
+        </Flex>
     );
 };
 

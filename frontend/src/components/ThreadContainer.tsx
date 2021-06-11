@@ -17,9 +17,7 @@ const TopThreads: React.FC = () => {
     useEffect(() => {
         (async () => {
             try {
-                console.log(state);
                 const json = await getThreads();
-                console.log(state);
                 setThreads(json);
             } catch (e) {
                 console.error(e);

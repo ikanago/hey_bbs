@@ -1,10 +1,9 @@
 import { Button } from "@chakra-ui/button";
-import { Flex, Spacer, Text } from "@chakra-ui/layout";
+import { Flex, HStack, Spacer, Text } from "@chakra-ui/layout";
 import React, { useContext } from "react";
 import { AuthContext, User } from "../context/context";
 import { logout } from "../api";
 import { useHistory } from "react-router";
-import { HStack } from "@chakra-ui/react";
 
 type Props = {
     user?: User;
@@ -30,32 +29,49 @@ const Header: React.FC<Props> = props => {
             mb="3"
             borderBottomRadius="lg"
         >
-            <Text fontSize="32">HeyBBS</Text>
+            <Text fontSize="32" as="samp">
+                HeyBBS
+            </Text>
             <Spacer />
             <HStack spacing="3">
                 {props.user ? (
                     <>
                         <Text fontSize="28" mr="3">
-                            {props.user.username}
+                            @{props.user.username}
                         </Text>
                         <Button
                             colorScheme="blue"
+                            fontSize="20"
                             onClick={() => {
                                 history.push("/threads");
                             }}
                         >
                             Threads
                         </Button>
-                        <Button colorScheme="red.800" onClick={handleClick}>
+                        <Button
+                            colorScheme="red.800"
+                            fontSize="20"
+                            onClick={handleClick}
+                        >
                             Log out
                         </Button>
                     </>
                 ) : (
                     <>
-                        <Button as="a" href="/login" variant="outline">
+                        <Button
+                            as="a"
+                            href="/login"
+                            fontSize="20"
+                            variant="outline"
+                        >
                             Log in
                         </Button>
-                        <Button as="a" href="/signup" colorScheme="blue">
+                        <Button
+                            as="a"
+                            href="/signup"
+                            fontSize="20"
+                            colorScheme="blue"
+                        >
                             Sign up
                         </Button>
                     </>
