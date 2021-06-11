@@ -119,9 +119,12 @@ def logout(req: Request) -> Response:
     return res
 
 
-def get_posts_inner() -> Response:
-    posts = session.query(Post, User).filter(
-        User.user_id == Post.user_id).order_by(Post.post_id.desc()).limit(20).all()
+def get_posts_inner(thread_name: str) -> Response:
+    posts = session.query(Post, User, Thread) \
+        .filter(Thread.thread_name == thread_name) \
+        .filter(Post.thread_id == Thread.thread_id) \
+        .filter(User.user_id == Post.user_id) \
+        .order_by(Post.post_id.desc()).limit(20).all()
     posts = [
         {
             "post_id": post.Post.post_id,
@@ -135,12 +138,13 @@ def get_posts_inner() -> Response:
     return res
 
 
-@server.route("/posts")
-def get_posts(_req: Request) -> Response:
-    return get_posts_inner()
+@server.route("/posts/*")
+def get_posts(req: Request) -> Response:
+    thread_name = req.uri.split("/")[-1]
+    return get_posts_inner(thread_name)
 
 
-@server.route("/posts", Method.POST)
+@server.route("/posts/*", Method.POST)
 def create_post(req: Request) -> Response:
     if req.body is None:
         return Response(status_code=StatusCode.BAD_REQUEST)
@@ -149,11 +153,15 @@ def create_post(req: Request) -> Response:
         return Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
 
     print(req.session)
-    post = Post.from_json(str(req.body), req.session.get(USER_ID))
+    thread_name = req.uri.split("/")[-1]
+    thread = session.query(Thread).filter(
+        Thread.thread_name == thread_name).one()
+    post = Post.from_json(
+        str(req.body), req.session.get(USER_ID), thread.thread_id)
     session.add(post)
     session.commit()
 
-    return get_posts_inner()
+    return get_posts_inner(thread_name)
 
 
 def get_threads_inner() -> Response:
@@ -163,6 +171,7 @@ def get_threads_inner() -> Response:
     res = Response(body=Body.from_str(json))
     res.set(CONTENT_TYPE, APPLICATION_JSON)
     return res
+
 
 @server.route("/threads")
 def get_threads(_req: Request) -> Response:

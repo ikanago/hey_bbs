@@ -33,6 +33,7 @@ class Router:
         if handler is not None:
             return handler
         for ((wildcard_path, wildcard_method), wildcard_handler) in self.__wildcard_map.items():
+            print(wildcard_path, uri)
             if uri.startswith(wildcard_path) and method == wildcard_method:
                 return wildcard_handler
         return not_found_handler

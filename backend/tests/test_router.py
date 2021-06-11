@@ -29,7 +29,8 @@ def test_absent_route():
 @pytest.fixture
 def wildcard_router() -> Router:
     router = Router()
-    routes = [("/*", Method.GET), ("/", Method.GET), ("/api/posts", Method.POST)]
+    routes = [("/*", Method.GET), ("/", Method.GET),
+              ("/api/posts", Method.GET), ("/api/posts", Method.POST)]
     for route in routes:
         router.route(*route, ok)
     return router
@@ -43,6 +44,8 @@ def test_match_wildcard(wildcard_router: Router):
 
 
 def test_concrete_path_does_not_match_wildcard(wildcard_router: Router):
+    assert wildcard_router.dispatch(
+        "/api/posts", Method.GET)(Request()).is_success()
     assert wildcard_router.dispatch(
         "/api/posts", Method.POST)(Request()).is_success()
     assert wildcard_router.dispatch(
