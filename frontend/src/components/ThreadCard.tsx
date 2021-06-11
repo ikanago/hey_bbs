@@ -1,8 +1,8 @@
 import { Box } from "@chakra-ui/layout";
 import React from "react";
-import type { Threads } from "./Threads";
+import type { Thread } from "./ThreadContainer";
 
-const ThreadCard: React.FC<Partial<Threads>> = props => {
+const ThreadCard: React.FC<Partial<Thread>> = props => {
     return (
         <Box mt={3} textAlign="left" bg="brand.800" borderRadius="lg">
             <Box pl={5} fontSize="28">

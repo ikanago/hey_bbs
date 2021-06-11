@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/layout";
 import React from "react";
-import type { Post } from "./PostForm";
+import type { Post } from "./PostContainer";
 
 const PostCard: React.FC<Partial<Post>> = props => {
     return (

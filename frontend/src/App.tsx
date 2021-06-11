@@ -3,10 +3,10 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { Box, ChakraProvider, extendTheme } from "@chakra-ui/react";
 import AuthProvider from "./context/AuthProvider";
 import Login from "./components/Login";
-import Posts from "./components/Posts";
+import PostContainer from "./components/PostContainer";
 import PrivateRoute from "./components/PrivateRoute";
 import Signup from "./components/Signup";
-import TopThreads from "./components/Threads";
+import ThreadContainer from "./components/ThreadContainer";
 
 const theme = extendTheme({
     styles: {
@@ -34,10 +34,10 @@ const App: React.FC = () => {
                     <BrowserRouter>
                         <Switch>
                             <PrivateRoute path="/threads" fallback="/login">
-                                <TopThreads />
+                                <ThreadContainer />
                             </PrivateRoute>
                             <PrivateRoute path="/posts" fallback="/login">
-                                <Posts />
+                                <PostContainer />
                             </PrivateRoute>
                             <Route path="/signup" children={<Signup />} />
                             <Route path="/login" children={<Login />} />
