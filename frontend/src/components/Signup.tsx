@@ -1,11 +1,12 @@
 import React, { useContext, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { AuthContext } from "../context/context";
-import { signup } from "../api";
-import { Flex, Text } from "@chakra-ui/layout";
+import { Flex } from "@chakra-ui/layout";
 import { Input } from "@chakra-ui/input";
 import { Button } from "@chakra-ui/button";
 import { FormLabel } from "@chakra-ui/form-control";
+import { signup } from "../api";
+import { AuthContext } from "../context/context";
+import FormError from "./FormError";
 import Header from "./Header";
 import { validateForm } from "../validate";
 
@@ -39,6 +40,7 @@ const Signup: React.FC = () => {
             <Header />
             <Flex direction="column" mt="10" px="30%">
                 <form>
+                    {signUpError ? <FormError message={signUpError} /> : <></>}
                     <FormLabel>Username</FormLabel>
                     <Input
                         mb="4"
@@ -53,13 +55,6 @@ const Signup: React.FC = () => {
                         value={password}
                         type="password"
                     />
-                    {signUpError ? (
-                        <Text mb="4" px="3" color="red.500">
-                            {signUpError}
-                        </Text>
-                    ) : (
-                        <></>
-                    )}
                     <Button
                         colorScheme="blue"
                         width="100%"
