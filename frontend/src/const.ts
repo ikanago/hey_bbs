@@ -6,5 +6,7 @@ export const endpoint = {
     login: "/login",
     logout: "/logout",
     posts: "/posts",
+    image: "/image",
+    uploadImage: "/upload_image",
     threads: "/threads",
 };

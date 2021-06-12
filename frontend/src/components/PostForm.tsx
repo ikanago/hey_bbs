@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { createPost } from "../api";
+import { createPost, uploadImage } from "../api";
 import { Flex, HStack } from "@chakra-ui/layout";
 import { Textarea } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/button";
@@ -13,19 +13,35 @@ type Props = {
 
 const PostForm: React.FC<Props> = props => {
     const [text, setText] = useState("");
+    const [file, setFile] = useState<File>();
     const { threadName } = useParams<{ threadName: string }>();
 
     const handleClick = async () => {
         try {
-            const json = await createPost(text, threadName);
+            let image_id: string | undefined;
+            if (file) {
+                const json = await uploadImage(file);
+                image_id = json["image_id"];
+            }
+            const json = await createPost(text, image_id, threadName);
             props.setPosts(json);
         } catch (e) {
             console.error(e);
             // Remove following line and prompt error message.
             props.setPosts([]);
         } finally {
+            setFile(undefined);
             setText("");
         }
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files) {
+            return;
+        }
+        const image = files[0];
+        setFile(image);
     };
 
     return (
@@ -51,6 +67,8 @@ const PostForm: React.FC<Props> = props => {
             >
                 Send
             </Button>
+            <input type="file" onChange={handleChange} />
+            {file ? <img src={URL.createObjectURL(file)} /> : <></>}
         </Flex>
     );
 };

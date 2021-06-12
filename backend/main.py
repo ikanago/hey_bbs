@@ -123,16 +123,18 @@ def logout(req: Request) -> Response:
 
 
 def get_posts_inner(thread_name: str) -> Response:
-    posts = session.query(Post, User, Thread) \
+    posts = session.query(Post, User, Thread, Image) \
         .filter(Thread.thread_name == thread_name) \
         .filter(Post.thread_id == Thread.thread_id) \
         .filter(User.user_id == Post.user_id) \
+        .filter(Post.image_id == Image.image_id) \
         .order_by(Post.post_id.desc()).limit(20).all()
     posts = [
         {
             "post_id": post.Post.post_id,
             "text": post.Post.text,
             "username": post.User.username,
+            "image_id": post.Image.image_id,
         }
         for post in posts]
     json = dumps(posts)
@@ -182,7 +184,7 @@ def get_threads(_req: Request) -> Response:
 
 
 @server.route("/threads", Method.POST)
-def create_post(req: Request) -> Response:
+def create_thread(req: Request) -> Response:
     if req.body is None:
         return Response(status_code=StatusCode.BAD_REQUEST)
 
@@ -196,13 +198,19 @@ def create_post(req: Request) -> Response:
     return get_threads_inner()
 
 
-@server.route("/images", Method.POST)
+@server.route("/image", Method.POST)
 def get_image(req: Request) -> Response:
     if req.body is None:
         return Response(status_code=StatusCode.BAD_REQUEST)
 
     json = loads(str(req.body))
-    image = session.query(Image).filter(Image.image_id == json["image_id"]).one()
+    try:
+        image = session.query(Image).filter(
+            Image.image_id == json["image_id"]).one()
+    except:
+        # No corresponding images.
+        return Response()
+
     body = Body(image.entity)
     res = Response(body=body)
     res.set(CONTENT_TYPE, image.image_type)
@@ -225,7 +233,11 @@ def upload_image(req: Request) -> Response:
     image = Image(image_type=mime, entity=req.body.to_bytes())
     session.add(image)
     session.commit()
-    return Response()
+    json = {
+        "image_id": image.image_id,
+    }
+    body = Body.from_str(dumps(json))
+    return Response(body=body)
 
 
 def main():

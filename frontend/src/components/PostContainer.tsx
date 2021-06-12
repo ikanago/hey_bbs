@@ -11,6 +11,7 @@ export type Post = {
     id: number;
     text: string;
     username: string;
+    image_id: string;
 };
 
 const PostContainer: React.FC = () => {
@@ -39,6 +40,7 @@ const PostContainer: React.FC = () => {
                     key={post.id}
                     text={post.text}
                     username={post.username}
+                    image_id={post.image_id}
                 />
             ))}
         </Flex>

@@ -61,7 +61,11 @@ export const getPosts = async (thread_name: string): Promise<any> => {
     return await res.json();
 };
 
-export const createPost = async (text: string, threadName: string): Promise<any> => {
+export const createPost = async (
+    text: string,
+    imageId: string | undefined,
+    threadName: string
+): Promise<any> => {
     const res = await fetch(`${baseUrl}/${endpoint.posts}/${threadName}`, {
         method: "POST",
         credentials: "include",
@@ -70,7 +74,44 @@ export const createPost = async (text: string, threadName: string): Promise<any>
         },
         body: JSON.stringify({
             text: text,
+            image_id: imageId,
         }),
+    });
+    if (!res.ok) {
+        throw new Error(`HTTP error: ${res.status}`);
+    }
+    return await res.json();
+};
+
+export const getImage = async (imageId: string): Promise<Blob | undefined> => {
+    const res = await fetch(`${baseUrl}/${endpoint.image}`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            image_id: imageId,
+        }),
+    });
+    if (!res.ok) {
+        throw new Error(`HTTP error: ${res.status}`);
+    }
+    const contentLength = res.headers.get("Content-Length");
+    if (contentLength === "0" || contentLength === null) {
+        return undefined;
+    }
+    return await res.blob();
+};
+
+export const uploadImage = async (image: Blob): Promise<any> => {
+    const res = await fetch(`${baseUrl}/${endpoint.uploadImage}`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "image/png",
+        },
+        body: image,
     });
     if (!res.ok) {
         throw new Error(`HTTP error: ${res.status}`);

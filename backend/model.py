@@ -18,10 +18,11 @@ class Post(Base):
     text = Column(String(255), nullable=False)
     user_id = Column(Integer, ForeignKey("user.user_id"))
     thread_id = Column(Integer, ForeignKey("thread.thread_id"))
+    image_id = Column(Integer, ForeignKey("image.image_id"))
 
     def from_json(json: str, user_id: str, thread_id: str) -> Post:
         data = loads(json)
-        return Post(text=data["text"], user_id=user_id, thread_id=thread_id)
+        return Post(text=data["text"], user_id=user_id, thread_id=thread_id, image_id=data["image_id"])
 
 
 class PostEncoder(JSONEncoder):
@@ -91,4 +92,4 @@ class Image(Base):
                       nullable=False, unique=True)
     image_type = Column(String(255), nullable=False)
     entity = Column(BLOB)
-    # posts = relationship("Post")
+    posts = relationship("Post")
