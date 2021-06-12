@@ -1,8 +1,6 @@
 import React, { useRef, useState } from "react";
 import { createPost, uploadImage } from "../api";
-import { Flex, HStack } from "@chakra-ui/layout";
-import { Textarea, VStack } from "@chakra-ui/react";
-import { Button } from "@chakra-ui/button";
+import { Button, Flex, Textarea } from "@chakra-ui/react";
 import { validatePost } from "../validate";
 import type { Post } from "./PostContainer";
 import { useParams } from "react-router-dom";
@@ -91,7 +89,7 @@ const PostForm: React.FC<Props> = props => {
                     onChange={handleChange}
                 />
             </Flex>
-            {file ? <img src={URL.createObjectURL(file)} /> : <></>}
+            {file ? <img src={URL.createObjectURL(file)} height="150%" /> : <></>}
         </>
     );
 };

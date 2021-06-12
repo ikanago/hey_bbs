@@ -1,5 +1,5 @@
-import { Box } from "@chakra-ui/layout";
 import React, { useEffect, useState } from "react";
+import { Box, Center } from "@chakra-ui/react";
 import { getImage } from "../api";
 import type { Post } from "./PostContainer";
 
@@ -9,7 +9,6 @@ const PostCard: React.FC<Partial<Post>> = props => {
     useEffect(() => {
         (async () => {
             try {
-                console.log(props);
                 if (!props.image_id) {
                     return;
                 }
@@ -25,14 +24,25 @@ const PostCard: React.FC<Partial<Post>> = props => {
     }, []);
 
     return (
-        <Box mb={3} textAlign="left" bg="brand.800" borderRadius="lg">
-            <Box pl={5} fontSize="28">
-                @{props.username}
-            </Box>
-            <Box px={7} pb={3} fontSize="20" whiteSpace="pre-wrap">
+        <Box
+            mb={3}
+            px={5}
+            py={2}
+            textAlign="left"
+            bg="brand.800"
+            borderRadius="lg"
+        >
+            <Box fontSize="28">@{props.username}</Box>
+            <Box px={2} pb={3} fontSize="20" whiteSpace="pre-wrap">
                 {props.text}
             </Box>
-            <img src={imageUrl} />
+            {imageUrl.length > 0 ? (
+                <Center>
+                    <img src={imageUrl} width="50%" />
+                </Center>
+            ) : (
+                <></>
+            )}
         </Box>
     );
 };

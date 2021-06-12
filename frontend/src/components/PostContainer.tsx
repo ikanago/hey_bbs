@@ -18,7 +18,6 @@ const PostContainer: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const { state } = useContext(AuthContext);
     const { threadName } = useParams<{ threadName: string }>();
-    console.log(posts);
 
     useEffect(() => {
         (async () => {
