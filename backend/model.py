@@ -18,11 +18,11 @@ class Post(Base):
     text = Column(String(255), nullable=False)
     user_id = Column(Integer, ForeignKey("user.user_id"))
     thread_id = Column(Integer, ForeignKey("thread.thread_id"))
-    image_id = Column(Integer, ForeignKey("image.image_id"))
+    image_id = Column(Integer, ForeignKey("image.image_id"), nullable=True)
 
     def from_json(json: str, user_id: str, thread_id: str) -> Post:
         data = loads(json)
-        return Post(text=data["text"], user_id=user_id, thread_id=thread_id, image_id=data["image_id"])
+        return Post(text=data.get("text"), user_id=user_id, thread_id=thread_id, image_id=data.get("image_id"))
 
 
 class PostEncoder(JSONEncoder):

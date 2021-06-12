@@ -8,16 +8,24 @@ const PostCard: React.FC<Partial<Post>> = props => {
 
     useEffect(() => {
         (async () => {
-            const blob = await getImage(props.image_id!);
-            if (blob) {
-                const url = URL.createObjectURL(blob);
-                setImageUrl(url);
+            try {
+                console.log(props);
+                if (!props.image_id) {
+                    return;
+                }
+                const blob = await getImage(props.image_id);
+                if (blob) {
+                    const url = URL.createObjectURL(blob);
+                    setImageUrl(url);
+                }
+            } catch (e) {
+                console.error(e);
             }
         })();
     }, []);
 
     return (
-        <Box mt={3} textAlign="left" bg="brand.800" borderRadius="lg">
+        <Box mb={3} textAlign="left" bg="brand.800" borderRadius="lg">
             <Box pl={5} fontSize="28">
                 @{props.username}
             </Box>
