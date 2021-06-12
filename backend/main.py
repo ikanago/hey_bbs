@@ -7,7 +7,7 @@ from libbbs.request import Request
 from libbbs.misc import Method, StatusCode
 from libbbs.server import Server
 from libbbs.session_middleware import SessionMiddleware
-from model import Base, Post, PostEncoder, User
+from model import Base, Post, Thread, ThreadEncoder, User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -16,6 +16,8 @@ CREDENTIAL = "credential"
 SESSION_ID = "SID"
 USER_ID = "user_id"
 USERNAME = "username"
+CONTENT_TYPE = "Content-Type"
+APPLICATION_JSON = "application/json"
 
 
 engine = create_engine(
@@ -47,6 +49,7 @@ def verify_login(req: Request) -> Response:
         "username": req.session.get(USERNAME)
     })
     res = Response()
+    res.set(CONTENT_TYPE, APPLICATION_JSON)
     res.body = Body.from_str(json)
     return res
 
@@ -70,7 +73,7 @@ def signup(req: Request) -> Response:
     req.session.set(CREDENTIAL, user.credential())
     req.session.set(USER_ID, str(user.user_id))
     req.session.set(USERNAME, user.username)
-    return see_other("/posts")
+    return Response()
 
 
 @server.route("/login", Method.POST)
@@ -96,7 +99,7 @@ def login(req: Request) -> Response:
     req.session.set(CREDENTIAL, user.credential())
     req.session.set(USER_ID, user.user_id)
     req.session.set(USERNAME, user.username)
-    return see_other("/posts")
+    return Response()
 
 
 @server.route("/logout")
@@ -116,9 +119,12 @@ def logout(req: Request) -> Response:
     return res
 
 
-def get_posts_inner() -> Response:
-    posts = session.query(Post, User).join(
-        Post, Post.user_id == User.user_id).order_by(Post.post_id.desc()).limit(20).all()
+def get_posts_inner(thread_name: str) -> Response:
+    posts = session.query(Post, User, Thread) \
+        .filter(Thread.thread_name == thread_name) \
+        .filter(Post.thread_id == Thread.thread_id) \
+        .filter(User.user_id == Post.user_id) \
+        .order_by(Post.post_id.desc()).limit(20).all()
     posts = [
         {
             "post_id": post.Post.post_id,
@@ -126,18 +132,19 @@ def get_posts_inner() -> Response:
             "username": post.User.username,
         }
         for post in posts]
-    body = dumps(posts)
-    res = Response()
-    res.set_body(Body.from_str(body))
+    json = dumps(posts)
+    res = Response(body=Body.from_str(json))
+    res.set(CONTENT_TYPE, APPLICATION_JSON)
     return res
 
 
-@server.route("/posts")
-def get_posts(_req: Request) -> Response:
-    return get_posts_inner()
+@server.route("/posts/*")
+def get_posts(req: Request) -> Response:
+    thread_name = req.uri.split("/")[-1]
+    return get_posts_inner(thread_name)
 
 
-@server.route("/posts", Method.POST)
+@server.route("/posts/*", Method.POST)
 def create_post(req: Request) -> Response:
     if req.body is None:
         return Response(status_code=StatusCode.BAD_REQUEST)
@@ -146,11 +153,45 @@ def create_post(req: Request) -> Response:
         return Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
 
     print(req.session)
-    post = Post.from_json(str(req.body), req.session.get(USER_ID))
+    thread_name = req.uri.split("/")[-1]
+    thread = session.query(Thread).filter(
+        Thread.thread_name == thread_name).one()
+    post = Post.from_json(
+        str(req.body), req.session.get(USER_ID), thread.thread_id)
     session.add(post)
     session.commit()
 
-    return get_posts_inner()
+    return get_posts_inner(thread_name)
+
+
+def get_threads_inner() -> Response:
+    threads = session.query(Thread).order_by(
+        Thread.thread_id.desc()).limit(20).all()
+    json = dumps(threads, cls=ThreadEncoder)
+    res = Response(body=Body.from_str(json))
+    res.set(CONTENT_TYPE, APPLICATION_JSON)
+    return res
+
+
+@server.route("/threads")
+def get_threads(_req: Request) -> Response:
+    return get_threads_inner()
+
+
+@server.route("/threads", Method.POST)
+def create_post(req: Request) -> Response:
+    body = req.body
+    if body is None:
+        return Response(status_code=StatusCode.UNAUTHORIZED)
+
+    thread = Thread.from_json(str(req.body))
+    already_exist_threads = session.query(Thread).filter(
+        Thread.thread_name == thread.thread_name).all()
+    if len(already_exist_threads) != 0:
+        return Response(status_code=StatusCode.BAD_REQUEST)
+    session.add(thread)
+    session.commit()
+    return get_threads_inner()
 
 
 def main():

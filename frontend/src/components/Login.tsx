@@ -27,7 +27,7 @@ const Login: React.FC = () => {
                     },
                 },
             });
-            history.push("/posts");
+            history.push("/threads");
         } catch (e) {
             setLogInError("Username or password is wrong. Please try again.");
         }

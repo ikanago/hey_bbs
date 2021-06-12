@@ -1,18 +1,14 @@
 import { Box } from "@chakra-ui/layout";
 import React from "react";
+import type { Post } from "./PostContainer";
 
-export type Props = {
-    text: string;
-    username: string;
-};
-
-const PostCard: React.FC<Props> = props => {
+const PostCard: React.FC<Partial<Post>> = props => {
     return (
         <Box mt={3} textAlign="left" bg="brand.800" borderRadius="lg">
             <Box pl={5} fontSize="28">
-                {props.username}
+                @{props.username}
             </Box>
-            <Box px={7} pb={3} fontSize="20">
+            <Box px={7} pb={3} fontSize="20" whiteSpace="pre-wrap">
                 {props.text}
             </Box>
         </Box>

@@ -1,74 +1,57 @@
-import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../context/context";
-import { createPost, getPosts } from "../api";
-import TimeLine from "./TimeLine";
-import Header from "./Header";
-import { HStack } from "@chakra-ui/layout";
-import { Input } from "@chakra-ui/input";
+import React, { useState } from "react";
+import { createPost } from "../api";
+import { Flex, HStack } from "@chakra-ui/layout";
+import { Textarea } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/button";
 import { validatePost } from "../validate";
+import type { Post } from "./PostContainer";
+import { useParams } from "react-router-dom";
 
-export type Post = {
-    id: number;
-    text: string;
-    username: string;
+type Props = {
+    setPosts: React.Dispatch<React.SetStateAction<Post[]>>;
 };
 
-const PostForm: React.FC = () => {
-    const [posts, setPosts] = useState<Post[]>([]);
+const PostForm: React.FC<Props> = props => {
     const [text, setText] = useState("");
-    const { state } = useContext(AuthContext);
-
-    useEffect(() => {
-        (async () => {
-            try {
-                const json = await getPosts();
-                setPosts(json);
-            } catch (e) {
-                console.error(e);
-                setPosts([]);
-            }
-        })();
-    }, []);
+    const { threadName } = useParams<{ threadName: string }>();
 
     const handleClick = async () => {
         try {
-            const json = await createPost(text);
-            setPosts(json);
+            const json = await createPost(text, threadName);
+            props.setPosts(json);
         } catch (e) {
             console.error(e);
-            setPosts([]);
+            // Remove following line and prompt error message.
+            props.setPosts([]);
         } finally {
             setText("");
         }
     };
 
     return (
-        <>
-            <Header user={state.user} />
-            <HStack>
-                <Input
-                    placeholder="What's going on?"
-                    onChange={event => setText(event.target.value)}
-                    value={text}
-                    type="text"
-                />
-                <Button
-                    colorScheme="blue"
-                    onClick={e => {
-                        e.preventDefault();
-                        const valid = validatePost(text);
-                        if (!valid) {
-                            return;
-                        }
-                        handleClick();
-                    }}
-                >
-                    Send
-                </Button>
-            </HStack>
-            <TimeLine posts={posts} />
-        </>
+        <Flex alignItems="flex-end" justifyContent="space-between">
+            <Textarea
+                placeholder="What's going on?"
+                onChange={event => setText(event.target.value)}
+                value={text}
+                type="text"
+                mr="3"
+            />
+            <Button
+                fontSize="20"
+                colorScheme="blue"
+                onClick={e => {
+                    e.preventDefault();
+                    const valid = validatePost(text);
+                    if (!valid) {
+                        return;
+                    }
+                    handleClick();
+                }}
+            >
+                Send
+            </Button>
+        </Flex>
     );
 };
 

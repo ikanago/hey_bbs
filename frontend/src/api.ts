@@ -1,6 +1,6 @@
 import { baseUrl, endpoint } from "./const";
 
-const verifyLogin = async () => {
+export const verifyLogin = async () => {
     const res = await fetch(`${baseUrl}/${endpoint.verifyLogin}`, {
         method: "GET",
         credentials: "include",
@@ -11,7 +11,7 @@ const verifyLogin = async () => {
     return await res.json();
 };
 
-const signup = async (username: string, password: string) => {
+export const signup = async (username: string, password: string) => {
     const res = await fetch(`${baseUrl}/${endpoint.signup}`, {
         method: "POST",
         headers: {
@@ -27,8 +27,8 @@ const signup = async (username: string, password: string) => {
     }
 };
 
-const login = async (username: string, password: string) => {
-    const res = await fetch(`${baseUrl}/login`, {
+export const login = async (username: string, password: string) => {
+    const res = await fetch(`${baseUrl}/${endpoint.login}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -43,26 +43,26 @@ const login = async (username: string, password: string) => {
     }
 };
 
-const logout = async () => {
+export const logout = async () => {
     await fetch(`${baseUrl}/${endpoint.logout}`, {
         method: "GET",
         credentials: "include",
     });
-}
+};
 
-const getPosts = async (): Promise<any> => {
-    const res = await fetch(`${baseUrl}/posts`, {
+export const getPosts = async (thread_name: string): Promise<any> => {
+    const res = await fetch(`${baseUrl}/${endpoint.posts}/${thread_name}`, {
         method: "GET",
         credentials: "include",
     });
-    if (res.status >= 400) {
+    if (!res.ok) {
         throw new Error(`HTTP error: ${res.status}`);
     }
     return await res.json();
 };
 
-const createPost = async (text: string): Promise<any> => {
-    const res = await fetch(`${baseUrl}/posts`, {
+export const createPost = async (text: string, threadName: string): Promise<any> => {
+    const res = await fetch(`${baseUrl}/${endpoint.posts}/${threadName}`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -72,10 +72,36 @@ const createPost = async (text: string): Promise<any> => {
             text: text,
         }),
     });
-    if (res.status >= 400) {
+    if (!res.ok) {
         throw new Error(`HTTP error: ${res.status}`);
     }
     return await res.json();
 };
 
-export { createPost, getPosts, login, logout, signup, verifyLogin };
+export const getThreads = async (): Promise<any> => {
+    const res = await fetch(`${baseUrl}/${endpoint.threads}`, {
+        method: "GET",
+        credentials: "include",
+    });
+    if (!res.ok) {
+        throw new Error(`HTTP error: ${res.status}`);
+    }
+    return await res.json();
+};
+
+export const createThread = async (threadName: string): Promise<any> => {
+    const res = await fetch(`${baseUrl}/${endpoint.threads}`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            thread_name: threadName,
+        }),
+    });
+    if (!res.ok) {
+        throw new Error(`HTTP error: ${res.status}`);
+    }
+    return await res.json();
+};
