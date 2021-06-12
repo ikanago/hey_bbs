@@ -20,7 +20,7 @@ CONTENT_TYPE = "Content-Type"
 CONTENT_LENGTH = "Content-Length"
 APPLICATION_JSON = "application/json"
 IMAGE_PNG = "image/png"
-IMAGE_JPG = "image/jpg"
+IMAGE_JPG = "image/jpeg"
 
 
 engine = create_engine(
@@ -204,6 +204,7 @@ def get_image(req: Request) -> Response:
         return Response(status_code=StatusCode.BAD_REQUEST)
 
     json = loads(str(req.body))
+    print(json)
     try:
         image = session.query(Image).filter(
             Image.image_id == json["image_id"]).one()

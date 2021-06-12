@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import null
 from sqlalchemy.sql.schema import Column, ForeignKey
 from sqlalchemy.sql.sqltypes import Integer, String
-from sqlalchemy.dialects.mysql import BLOB
+from sqlalchemy.dialects.mysql.types import LONGBLOB
 
 Base = declarative_base()
 
@@ -91,5 +91,5 @@ class Image(Base):
     image_id = Column(Integer, primary_key=True, autoincrement=True,
                       nullable=False, unique=True)
     image_type = Column(String(255), nullable=False)
-    entity = Column(BLOB)
+    entity = Column(LONGBLOB)
     posts = relationship("Post")

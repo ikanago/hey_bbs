@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { createPost, uploadImage } from "../api";
 import { Flex, HStack } from "@chakra-ui/layout";
-import { Textarea } from "@chakra-ui/react";
+import { Textarea, VStack } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/button";
 import { validatePost } from "../validate";
 import type { Post } from "./PostContainer";
 import { useParams } from "react-router-dom";
+
+const acceptFileType = ["jpeg", "png"].map(fileType => `image/${fileType}`);
+const acceptMimeType = acceptFileType.join(", ");
 
 type Props = {
     setPosts: React.Dispatch<React.SetStateAction<Post[]>>;
@@ -19,7 +22,8 @@ const PostForm: React.FC<Props> = props => {
     const handleClick = async () => {
         try {
             let image_id: string | undefined;
-            if (file) {
+            console.log(file?.type);
+            if (file && acceptFileType.includes(file.type)) {
                 const json = await uploadImage(file);
                 image_id = json["image_id"];
             }
@@ -45,7 +49,7 @@ const PostForm: React.FC<Props> = props => {
     };
 
     return (
-        <Flex alignItems="flex-end" justifyContent="space-between">
+        <>
             <Textarea
                 placeholder="What's going on?"
                 onChange={event => setText(event.target.value)}
@@ -53,23 +57,35 @@ const PostForm: React.FC<Props> = props => {
                 type="text"
                 mr="3"
             />
-            <Button
-                fontSize="20"
-                colorScheme="blue"
-                onClick={e => {
-                    e.preventDefault();
-                    const valid = validatePost(text);
-                    if (!valid) {
-                        return;
-                    }
-                    handleClick();
-                }}
+            <Flex
+                direction="row"
+                alignItems="flex-end"
+                justifyContent="space-between"
             >
-                Send
-            </Button>
-            <input type="file" onChange={handleChange} />
-            {file ? <img src={URL.createObjectURL(file)} /> : <></>}
-        </Flex>
+                <VStack>
+                    <Button
+                        fontSize="20"
+                        colorScheme="blue"
+                        onClick={e => {
+                            e.preventDefault();
+                            const valid = validatePost(text);
+                            if (!valid) {
+                                return;
+                            }
+                            handleClick();
+                        }}
+                    >
+                        Send
+                    </Button>
+                    <input
+                        type="file"
+                        accept={acceptMimeType}
+                        onChange={handleChange}
+                    />
+                </VStack>
+                {file ? <img src={URL.createObjectURL(file)} /> : <></>}
+            </Flex>
+        </>
     );
 };
 

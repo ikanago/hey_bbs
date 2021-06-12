@@ -8,7 +8,6 @@ const PostCard: React.FC<Partial<Post>> = props => {
 
     useEffect(() => {
         (async () => {
-            console.log(props.image_id);
             const blob = await getImage(props.image_id!);
             if (blob) {
                 const url = URL.createObjectURL(blob);
