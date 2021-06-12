@@ -6,6 +6,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import null
 from sqlalchemy.sql.schema import Column, ForeignKey
 from sqlalchemy.sql.sqltypes import Integer, String
+from sqlalchemy.dialects.mysql import BLOB
 
 Base = declarative_base()
 
@@ -82,3 +83,12 @@ class ThreadEncoder(JSONEncoder):
             }
         else:
             return JSONEncoder.default(self, obj)
+
+
+class Image(Base):
+    __tablename__ = "image"
+    image_id = Column(Integer, primary_key=True, autoincrement=True,
+                      nullable=False, unique=True)
+    image_type = Column(String(255), nullable=False)
+    entity = Column(BLOB)
+    # posts = relationship("Post")

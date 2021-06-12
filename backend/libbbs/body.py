@@ -7,22 +7,28 @@ from dataclasses_json import DataClassJsonMixin
 
 @dataclass
 class Body:
-    __inner: str = ""
+    __inner: bytes = bytes()
 
     def __init__(self, inner: bytes) -> None:
-        self.__inner = inner.decode()
+        self.__inner = inner
 
     def __len__(self) -> int:
         return len(self.__inner)
 
     def __str__(self) -> str:
-        return self.__inner
+        return self.__inner.decode()
 
     @staticmethod
     def from_str(inner: str) -> Body:
         body = Body(b"")
-        body.__inner = inner
+        body.__inner = inner.encode("utf-8")
         return body
+
+    def to_bytes(self) -> bytes:
+        return self.__inner
+
+    def size(self) -> int:
+        return len(self.__inner)
 
     T = TypeVar("T", bound=DataClassJsonMixin)
 
@@ -75,6 +81,3 @@ class Body:
         if isinstance(data, DataClassJsonMixin):
             return Body.from_str(data.to_json())
         raise BadRequest
-
-    def to_bytes(self) -> bytes:
-        return self.__inner.encode("utf-8")

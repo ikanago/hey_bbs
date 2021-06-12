@@ -1,4 +1,4 @@
-from json import dumps
+from json import dumps, loads
 import sqlalchemy
 from libbbs.body import Body
 from libbbs.login import LoginMiddleware
@@ -7,7 +7,7 @@ from libbbs.request import Request
 from libbbs.misc import Method, StatusCode
 from libbbs.server import Server
 from libbbs.session_middleware import SessionMiddleware
-from model import Base, Post, Thread, ThreadEncoder, User
+from model import Base, Image, Post, Thread, ThreadEncoder, User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -17,7 +17,10 @@ SESSION_ID = "SID"
 USER_ID = "user_id"
 USERNAME = "username"
 CONTENT_TYPE = "Content-Type"
+CONTENT_LENGTH = "Content-Length"
 APPLICATION_JSON = "application/json"
+IMAGE_PNG = "image/png"
+IMAGE_JPG = "image/jpg"
 
 
 engine = create_engine(
@@ -180,9 +183,8 @@ def get_threads(_req: Request) -> Response:
 
 @server.route("/threads", Method.POST)
 def create_post(req: Request) -> Response:
-    body = req.body
-    if body is None:
-        return Response(status_code=StatusCode.UNAUTHORIZED)
+    if req.body is None:
+        return Response(status_code=StatusCode.BAD_REQUEST)
 
     thread = Thread.from_json(str(req.body))
     already_exist_threads = session.query(Thread).filter(
@@ -192,6 +194,38 @@ def create_post(req: Request) -> Response:
     session.add(thread)
     session.commit()
     return get_threads_inner()
+
+
+@server.route("/images", Method.POST)
+def get_image(req: Request) -> Response:
+    if req.body is None:
+        return Response(status_code=StatusCode.BAD_REQUEST)
+
+    json = loads(str(req.body))
+    image = session.query(Image).filter(Image.image_id == json["image_id"]).one()
+    body = Body(image.entity)
+    res = Response(body=body)
+    res.set(CONTENT_TYPE, image.image_type)
+    res.set(CONTENT_LENGTH, str(body.size()))
+    return res
+
+
+@server.route("/upload_image", Method.POST)
+def upload_image(req: Request) -> Response:
+    if req.body is None:
+        return Response(status_code=StatusCode.BAD_REQUEST)
+
+    mime = req.get(CONTENT_TYPE)
+    if mime is None:
+        return Response(status_code=StatusCode.BAD_REQUEST)
+
+    if mime != IMAGE_PNG and mime != IMAGE_JPG:
+        return Response(status_code=StatusCode.BAD_REQUEST)
+
+    image = Image(image_type=mime, entity=req.body.to_bytes())
+    session.add(image)
+    session.commit()
+    return Response()
 
 
 def main():
