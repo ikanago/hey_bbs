@@ -8,9 +8,10 @@ import PostCard from "./PostCard";
 import { useParams } from "react-router-dom";
 
 export type Post = {
-    id: number;
+    post_id: number;
     text: string;
     username: string;
+    image_id: string;
 };
 
 const PostContainer: React.FC = () => {
@@ -36,9 +37,10 @@ const PostContainer: React.FC = () => {
             <PostForm setPosts={setPosts}></PostForm>
             {posts.map(post => (
                 <PostCard
-                    key={post.id}
+                    key={post.post_id}
                     text={post.text}
                     username={post.username}
+                    image_id={post.image_id}
                 />
             ))}
         </Flex>

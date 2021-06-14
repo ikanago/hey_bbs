@@ -6,6 +6,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import null
 from sqlalchemy.sql.schema import Column, ForeignKey
 from sqlalchemy.sql.sqltypes import Integer, String
+from sqlalchemy.dialects.mysql.types import LONGBLOB
 
 Base = declarative_base()
 
@@ -17,10 +18,11 @@ class Post(Base):
     text = Column(String(255), nullable=False)
     user_id = Column(Integer, ForeignKey("user.user_id"))
     thread_id = Column(Integer, ForeignKey("thread.thread_id"))
+    image_id = Column(Integer, ForeignKey("image.image_id"), nullable=True)
 
     def from_json(json: str, user_id: str, thread_id: str) -> Post:
         data = loads(json)
-        return Post(text=data["text"], user_id=user_id, thread_id=thread_id)
+        return Post(text=data.get("text"), user_id=user_id, thread_id=thread_id, image_id=data.get("image_id"))
 
 
 class PostEncoder(JSONEncoder):
@@ -82,3 +84,12 @@ class ThreadEncoder(JSONEncoder):
             }
         else:
             return JSONEncoder.default(self, obj)
+
+
+class Image(Base):
+    __tablename__ = "image"
+    image_id = Column(Integer, primary_key=True, autoincrement=True,
+                      nullable=False, unique=True)
+    image_type = Column(String(255), nullable=False)
+    entity = Column(LONGBLOB)
+    posts = relationship("Post")

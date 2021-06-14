@@ -1,4 +1,4 @@
-from json import dumps
+from json import dumps, loads
 import sqlalchemy
 from libbbs.body import Body
 from libbbs.login import LoginMiddleware
@@ -7,9 +7,9 @@ from libbbs.request import Request
 from libbbs.misc import Method, StatusCode
 from libbbs.server import Server
 from libbbs.session_middleware import SessionMiddleware
-from model import Base, Post, Thread, ThreadEncoder, User
+from model import Base, Image, Post, Thread, ThreadEncoder, User
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 
 CREDENTIAL = "credential"
@@ -17,7 +17,10 @@ SESSION_ID = "SID"
 USER_ID = "user_id"
 USERNAME = "username"
 CONTENT_TYPE = "Content-Type"
+CONTENT_LENGTH = "Content-Length"
 APPLICATION_JSON = "application/json"
+IMAGE_PNG = "image/png"
+IMAGE_JPG = "image/jpeg"
 
 
 engine = create_engine(
@@ -29,8 +32,8 @@ while True:
     except sqlalchemy.exc.OperationalError:
         continue
     break
-SessionClass = sessionmaker(engine)
-session = SessionClass()
+session_factory = sessionmaker(engine)
+Session = scoped_session(session_factory)
 
 server = Server()
 
@@ -61,18 +64,19 @@ def signup(req: Request) -> Response:
         return Response(status_code=StatusCode.UNAUTHORIZED)
 
     user = User.from_json(str(req.body))
-    already_exist_users = session.query(User).filter(
+    already_exist_users = Session.query(User).filter(
         User.username == user.username).all()
     if len(already_exist_users) != 0:
         return Response(status_code=StatusCode.BAD_REQUEST)
-    session.add(user)
-    session.commit()
+    Session.add(user)
+    Session.commit()
 
     if req.session is None:
         return Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
     req.session.set(CREDENTIAL, user.credential())
     req.session.set(USER_ID, str(user.user_id))
     req.session.set(USERNAME, user.username)
+    Session.remove()
     return Response()
 
 
@@ -83,7 +87,7 @@ def login(req: Request) -> Response:
         return Response(status_code=StatusCode.UNAUTHORIZED)
     user = User.from_json(str(req.body))
     try:
-        user_in_db = session.query(User).filter(
+        user_in_db = Session.query(User).filter(
             User.username == user.username).one()
         if user.username != user_in_db.username or user.password != user_in_db.password:
             print("Invalid credential.")
@@ -92,13 +96,14 @@ def login(req: Request) -> Response:
     except Exception:
         return Response(status_code=StatusCode.BAD_REQUEST)
     finally:
-        session.commit()
+        Session.commit()
 
     if req.session is None:
         return Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
     req.session.set(CREDENTIAL, user.credential())
     req.session.set(USER_ID, user.user_id)
     req.session.set(USERNAME, user.username)
+    Session.remove()
     return Response()
 
 
@@ -120,16 +125,19 @@ def logout(req: Request) -> Response:
 
 
 def get_posts_inner(thread_name: str) -> Response:
-    posts = session.query(Post, User, Thread) \
+    posts = Session.query(Post, User, Thread, Image) \
+        .outerjoin(Image, Post.image_id == Image.image_id) \
         .filter(Thread.thread_name == thread_name) \
         .filter(Post.thread_id == Thread.thread_id) \
         .filter(User.user_id == Post.user_id) \
         .order_by(Post.post_id.desc()).limit(20).all()
+
     posts = [
         {
             "post_id": post.Post.post_id,
             "text": post.Post.text,
             "username": post.User.username,
+            "image_id": post.Image.image_id if post.Image is not None else None,
         }
         for post in posts]
     json = dumps(posts)
@@ -152,20 +160,20 @@ def create_post(req: Request) -> Response:
     if req.session is None:
         return Response(status_code=StatusCode.INTERNAL_SERVER_ERROR)
 
-    print(req.session)
     thread_name = req.uri.split("/")[-1]
-    thread = session.query(Thread).filter(
+    thread = Session.query(Thread).filter(
         Thread.thread_name == thread_name).one()
     post = Post.from_json(
         str(req.body), req.session.get(USER_ID), thread.thread_id)
-    session.add(post)
-    session.commit()
+    Session.add(post)
+    Session.commit()
+    Session.remove()
 
     return get_posts_inner(thread_name)
 
 
 def get_threads_inner() -> Response:
-    threads = session.query(Thread).order_by(
+    threads = Session.query(Thread).order_by(
         Thread.thread_id.desc()).limit(20).all()
     json = dumps(threads, cls=ThreadEncoder)
     res = Response(body=Body.from_str(json))
@@ -179,19 +187,72 @@ def get_threads(_req: Request) -> Response:
 
 
 @server.route("/threads", Method.POST)
-def create_post(req: Request) -> Response:
-    body = req.body
-    if body is None:
-        return Response(status_code=StatusCode.UNAUTHORIZED)
+def create_thread(req: Request) -> Response:
+    if req.body is None:
+        return Response(status_code=StatusCode.BAD_REQUEST)
 
     thread = Thread.from_json(str(req.body))
-    already_exist_threads = session.query(Thread).filter(
+    already_exist_threads = Session.query(Thread).filter(
         Thread.thread_name == thread.thread_name).all()
     if len(already_exist_threads) != 0:
         return Response(status_code=StatusCode.BAD_REQUEST)
-    session.add(thread)
-    session.commit()
+    Session.add(thread)
+    Session.commit()
+    Session.remove()
     return get_threads_inner()
+
+
+@server.route("/image", Method.POST)
+def get_image(req: Request) -> Response:
+    if req.body is None:
+        return Response(status_code=StatusCode.BAD_REQUEST)
+
+    json = loads(str(req.body))
+    print(json)
+    try:
+        image = Session.query(Image).filter(
+            Image.image_id == json["image_id"]).one()
+    except:
+        # No corresponding images.
+        print("Failed to get image:", json["image_id"])
+        Session.commit()
+        Session.remove()
+        return Response()
+    Session.commit()
+
+    body = Body(image.entity)
+    res = Response(body=body)
+    res.set(CONTENT_TYPE, image.image_type)
+    res.set(CONTENT_LENGTH, str(body.size()))
+    Session.remove()
+    return res
+
+
+@server.route("/upload_image", Method.POST)
+def upload_image(req: Request) -> Response:
+    if req.body is None:
+        return Response(status_code=StatusCode.BAD_REQUEST)
+
+    mime = req.get(CONTENT_TYPE)
+    if mime is None:
+        return Response(status_code=StatusCode.BAD_REQUEST)
+
+    if mime != IMAGE_PNG and mime != IMAGE_JPG:
+        return Response(status_code=StatusCode.BAD_REQUEST)
+
+    image = Image(image_type=mime, entity=req.body.to_bytes())
+    Session.add(image)
+    Session.commit()
+    print("image id:", image.image_id)
+    json = {
+        "image_id": image.image_id,
+    }
+    body = Body.from_str(dumps(json))
+    res = Response(body=body)
+    res.set(CONTENT_TYPE, APPLICATION_JSON)
+    res.set(CONTENT_LENGTH, str(body.size()))
+    Session.remove()
+    return res
 
 
 def main():
