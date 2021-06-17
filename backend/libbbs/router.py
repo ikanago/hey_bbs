@@ -29,10 +29,17 @@ class Router:
         handler = self.__exact_map.get((uri, method))
         if handler is not None:
             return handler
+
+        candidate_handler = None
+        candidate_path = ""
         for ((wildcard_path, wildcard_method), wildcard_handler) in self.__wildcard_map.items():
-            if uri.startswith(wildcard_path) and method == wildcard_method:
-                return wildcard_handler
-        return not_found_handler
+            if uri.startswith(wildcard_path) and method == wildcard_method and candidate_path < wildcard_path:
+                candidate_handler = wildcard_handler
+                candidate_path = wildcard_path
+
+        if candidate_handler is None:
+            return not_found_handler
+        return candidate_handler
 
 
 def not_found_handler(_: Request) -> Response:

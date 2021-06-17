@@ -54,7 +54,7 @@ class Response:
             self.version, self.status_code.value, self.status_code.to_bytes()))
         for key, value in iter(self.__headers):
             socket.send(b"%b: %b\r\n" %
-                        (bytes(key, "utf-8"), bytes(value, "utf-8")))
+                        (key.encode("utf-8"), value.encode("utf-8")))
         socket.send(b"\r\n")
         if self.body is not None:
             socket.send(self.body.to_bytes())
