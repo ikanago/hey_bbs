@@ -1,12 +1,9 @@
 from __future__ import annotations
+from libbbs.handler import Handler
 from libbbs.request import Request
 from libbbs.response import Response
 from libbbs.misc import Method, StatusCode
-from typing import Callable
 import dataclasses
-
-
-Handler = Callable[[Request], Response]
 
 
 @dataclasses.dataclass
