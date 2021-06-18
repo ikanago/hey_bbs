@@ -22,7 +22,7 @@ const PostForm: React.FC<Props> = props => {
         try {
             let image_id: string | undefined;
             if (file && acceptFileType.includes(file.type)) {
-                const json = await uploadImage(file);
+                const json = await uploadImage(file, file.type);
                 image_id = json["image_id"];
             }
             const json = await createPost(text, image_id, threadName);

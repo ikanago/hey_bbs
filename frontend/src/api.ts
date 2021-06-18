@@ -104,12 +104,12 @@ export const getImage = async (imageId: string): Promise<Blob | undefined> => {
     return await res.blob();
 };
 
-export const uploadImage = async (image: Blob): Promise<any> => {
+export const uploadImage = async (image: Blob, fileType: string): Promise<any> => {
     const res = await fetch(`${baseUrl}/${endpoint.uploadImage}`, {
         method: "POST",
         credentials: "include",
         headers: {
-            "Content-Type": "image/png",
+            "Content-Type": fileType,
         },
         body: image,
     });

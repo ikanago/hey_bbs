@@ -62,8 +62,30 @@ class StatusCode(Enum):
 
 
 class Mime:
-    TEXT_PLAIN = "text/plain"
     APPLICATION_JSON = "application/json"
+    IMAGE_JPG = "image/jpeg"
+    IMAGE_PNG = "image/png"
+    TEXT_CSS = "text/css"
+    TEXT_HTML = "text/html"
+    TEXT_JAVASCRIPT = "text/javascript"
+    TEXT_PLAIN = "text/plain"
+
+    def from_filename(filename: str) -> Mime:
+        extension = filename.split(".")[-1]
+        if extension == "json":
+            return Mime.APPLICATION_JSON
+        elif extension == "png":
+            return Mime.IMAGE_PNG
+        elif extension == "jpg" or extension == "jpeg":
+            return Mime.IMAGE_JPG
+        elif extension == "css":
+            return Mime.TEXT_CSS
+        elif extension == "htm" or extension == "html":
+            return Mime.TEXT_HTML
+        elif extension == "js":
+            return Mime.TEXT_JAVASCRIPT
+        else:
+            return Mime.TEXT_PLAIN
 
 
 class HttpError(Exception):

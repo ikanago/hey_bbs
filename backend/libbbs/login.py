@@ -23,8 +23,10 @@ class LoginMiddleware(Middleware):
     def call(self, req: Request, next: Next) -> Response:
         if not req.uri.startswith(self.realm):
             return next.run(req)
-        if req.uri in self.exclude_path:
-            return next.run(req)
+        for path in self.exclude_path:
+            if req.uri.startswith(path):
+                print(req.uri)
+                return next.run(req)
 
         # All requests to `req.uri` need login credentials.
         if req.session is None:

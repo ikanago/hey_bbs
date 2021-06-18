@@ -7,6 +7,7 @@ from libbbs.request import Request
 from libbbs.misc import Method, StatusCode
 from libbbs.server import Server
 from libbbs.session_middleware import SessionMiddleware
+from libbbs.static_file import StaticFile
 from model import Base, Image, Post, Thread, ThreadEncoder, User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -258,7 +259,9 @@ def upload_image(req: Request) -> Response:
 def main():
     server.use(SessionMiddleware(SESSION_ID))
     server.use(LoginMiddleware(
-        ["/verify_login", "/signup", "/login"], credential_key=CREDENTIAL))
+        ["/verify_login", "/signup", "/login", "/static"], credential_key=CREDENTIAL))
+    server.serve_directory("/static", "build/static")
+    server.add_route("/*", Method.GET, StaticFile("build/index.html"))
     server.run(8080)
 
 

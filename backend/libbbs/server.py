@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Callable, List
-from libbbs.router import Handler, Router
+from libbbs.handler import Handler
+from libbbs.router import Router
 from libbbs.misc import InternalServerError, Method, StatusCode
 from libbbs.middleware import Middleware, Next
 from libbbs.parse_request import RequestParser
@@ -8,6 +9,8 @@ from libbbs.request import Request
 from libbbs.response import Response
 import socket
 import threading
+
+from libbbs.static_dir import StaticDir
 
 
 @dataclass
@@ -26,6 +29,12 @@ class Server:
 
     def add_route(self, uri: str, method: Method, handler: Handler):
         self.router.route(uri, method, handler)
+
+    def serve_directory(self, mount_uri: str, serve_dir):
+        if mount_uri.endswith("*"):
+            mount_uri = mount_uri.strip("*")
+        static_dir = StaticDir(mount_uri, serve_dir)
+        self.add_route(mount_uri + "*", Method.GET, static_dir)
 
     def run(self, port: int) -> None:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from libbbs.response import Response
 from typing import List
 from libbbs.request import Request
-from libbbs.router import Handler
+from libbbs.handler import Handler, HandlerMixin
 
 
 class Middleware(ABC):
@@ -42,6 +42,8 @@ class Next:
             self.__middlewares = remaining
             return first.call(req, self)
         else:
+            if isinstance(self.__handler, HandlerMixin):
+                return self.__handler.call(req)
             # mypy might not be able to distinguish calling function of class
             # member and method.
             return self.__handler(req)  # type: ignore
