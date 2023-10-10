@@ -20,7 +20,7 @@ RUN pip install pipenv
 
 COPY backend/Pipfile.lock ./
 
-RUN pipenv sync --system
+RUN pipenv sync
 
 COPY backend/libbbs ./libbbs/
 
@@ -28,4 +28,4 @@ COPY backend/main.py backend/model.py ./
 
 COPY --from=frontend /app/build ./build/
 
-CMD [ "python", "main.py" ]
+CMD [ "pipenv", "run", "python", "main.py" ]

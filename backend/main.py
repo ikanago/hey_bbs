@@ -1,4 +1,5 @@
 from json import dumps, loads
+import os
 import sqlalchemy
 from libbbs.body import Body
 from libbbs.login import LoginMiddleware
@@ -23,9 +24,14 @@ APPLICATION_JSON = "application/json"
 IMAGE_PNG = "image/png"
 IMAGE_JPG = "image/jpeg"
 
+MYSQL_USER = os.environ.get("MYSQL_USER") or "root"
+MYSQL_PASSWORD = os.environ.get("MYSQL_PASSWORD") or "test"
+MYSQL_HOSTNAME = os.environ.get("MYSQL_HOSTNAME") or "db"
+MYSQL_PORT = os.environ.get("MYSQL_PORT") or "3306"
+MYSQL_DATABASE = os.environ.get("MYSQL_DATABASE") or "testdb"
 
 engine = create_engine(
-    "mysql+pymysql://root:test@db:3306/testdb", pool_pre_ping=True)
+    f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOSTNAME}:{MYSQL_PORT}/{MYSQL_DATABASE}", pool_pre_ping=True)
 while True:
     # Wait until database is ready.
     try:
